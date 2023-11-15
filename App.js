@@ -1201,7 +1201,9 @@ function HomeScreen({ navigation }) {
     navigation.navigate("CreatePost");
   }
 
-  function onHandleExplore() {}
+  function onHandleExplore() {
+    navigation.navigate("ExploreScreen");
+  }
 
   function handleGoNotifications() {
     navigation.navigate("Notifications");
@@ -1243,7 +1245,7 @@ function HomeScreen({ navigation }) {
                 borderWidth: 2,
               }}
             />
-            <Text style={{ fontSize: 18, marginLeft: 10, fontWeight: 600 }}>
+            <Text style={{ fontSize: 18, marginLeft: 10, fontWeight: "600" }}>
               Home
             </Text>
           </TouchableOpacity>
@@ -1474,7 +1476,7 @@ function HomeScreen({ navigation }) {
                   alignItems: "center",
                 }}
               >
-                <Text style={{ fontSize: 16, fontWeight: 600 }}>501</Text>
+                <Text style={{ fontSize: 16, fontWeight: "600" }}>501</Text>
                 <Text style={{ fontSize: 13, marginLeft: 10 }}>Followers</Text>
               </View>
               <TouchableOpacity
@@ -1699,7 +1701,7 @@ function AudienceScreen({ navigation }) {
               Lifetime
             </Text>
           </TouchableOpacity>
-          <Text style={{ fontWeight: 600, fontSize: 15 }}>Lifetime</Text>
+          <Text style={{ fontWeight: "600", fontSize: 15 }}>Lifetime</Text>
         </View>
         <View style={{ height: 700, padding: 10 }}>
           <View
@@ -1739,7 +1741,7 @@ function AudienceScreen({ navigation }) {
                   alignItems: "center",
                 }}
               >
-                <Text style={{ fontSize: 16, fontWeight: 600 }}>501</Text>
+                <Text style={{ fontSize: 16, fontWeight: "600" }}>501</Text>
                 <Text style={{ fontSize: 13, marginLeft: 10 }}>
                   Facebook Followers
                 </Text>
@@ -1840,6 +1842,32 @@ const stylesShadow = StyleSheet.create({
   },
 });
 
+function ExploreScreen({ navigation }) {
+  return (
+    <SafeAreaView style={stylesHomePage.container}>
+      <View>
+        <CustomHeader showBack titleLeft="Explore" navigation={navigation} />
+        <View style={{ height: 700, paddingHorizontal: 20 }}>
+          <Text style={{ fontSize: 17, fontWeight: "bold" }}>
+            Audience growth
+          </Text>
+          <Text style={{ fontSize: 17, fontWeight: "bold", marginTop: 10 }}>
+            Friends
+          </Text>
+          <Text
+            style={{ fontSize: 13, color: Colors.textColor, marginTop: 10 }}
+          >
+            Invite frineds to follow your page. This will allow App to access
+            the frineds list from your personal account.
+          </Text>
+          <Text style={{ color: Colors.primaryColor }}>Learn more</Text>
+        </View>
+      </View>
+      <View height={100}></View>
+    </SafeAreaView>
+  );
+}
+
 function OverviewScreen({ navigation }) {
   const [active, setActive] = React.useState(1);
 
@@ -1898,14 +1926,14 @@ function OverviewScreen({ navigation }) {
             <Text style={{ fontSize: 17, fontWeight: "bold" }}>
               Expend your reach:
             </Text>
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
               <Text
                 style={{
                   fontSize: 15,
                   marginTop: 10,
                 }}
               >
-                Facebook reach: 
+                Facebook reach:
               </Text>
               <Text
                 style={{
@@ -2143,7 +2171,7 @@ function InboxScreen() {
           </TouchableOpacity>
         </View>
         <View style={{ marginTop: 10 }}>
-          <Text style={{ fontSize: 16, fontWeight: 600 }}>All messages</Text>
+          <Text style={{ fontSize: 16, fontWeight: "600" }}>All messages</Text>
         </View>
         <View
           style={{
@@ -2214,7 +2242,7 @@ export const CustomHeader = ({
               <ChevronLeftIcon color="black" />
             </TouchableOpacity>
             {titleLeft ? (
-              <Text style={{ fontSize: 17, fontWeight: 600 }}>{titleLeft}</Text>
+              <Text style={{ fontSize: 17, fontWeight: "600" }}>{titleLeft}</Text>
             ) : null}
           </View>
         ) : null}
@@ -2222,14 +2250,14 @@ export const CustomHeader = ({
 
       <View style={{ flexDirection: "row", alignItems: "center" }}>
         {info ? (
-          <Text style={{ fontSize: 17, fontWeight: 600 }}>{info}</Text>
+          <Text style={{ fontSize: 17, fontWeight: "600" }}>{info}</Text>
         ) : null}
 
         {right ? (
           <View style={{ flexDirection: "row", alignItems: "center" }}>
             <TouchableOpacity onPress={handleBack}>{right}</TouchableOpacity>
             {titleRight ? (
-              <Text style={{ fontSize: 17, fontWeight: 600 }}>
+              <Text style={{ fontSize: 17, fontWeight: "600" }}>
                 {titleRight}
               </Text>
             ) : null}
@@ -2892,7 +2920,7 @@ function SettingsScreen({ navigation }) {
         </View>
         <View style={{ marginTop: 20 }}>
           <View style={stylesProfile.switchContainer}>
-            <Text style={{ fontWeight: 600 }}>Dark Mode</Text>
+            <Text style={{ fontWeight: "600" }}>Dark Mode</Text>
             <Switch
               onColor={Colors.$textGeneral}
               value={darkMode}
@@ -2901,7 +2929,7 @@ function SettingsScreen({ navigation }) {
           </View>
 
           <View style={stylesProfile.switchContainer}>
-            <Text style={{ fontWeight: 600 }}>Show Ads</Text>
+            <Text style={{ fontWeight: "600" }}>Show Ads</Text>
             <Switch
               onColor={Colors.$textGeneral}
               value={showAds}
@@ -2910,7 +2938,7 @@ function SettingsScreen({ navigation }) {
           </View>
 
           <View style={stylesProfile.switchContainer}>
-            <Text style={{ fontWeight: 600 }}>Enable Notifications</Text>
+            <Text style={{ fontWeight: "600" }}>Enable Notifications</Text>
             <Switch
               onColor={Colors.$textGeneral}
               value={enableNotifications}
@@ -2961,6 +2989,11 @@ function App() {
           options={{ headerShown: false }}
           name="OverviewScreen"
           component={OverviewScreen}
+        />
+        <Stack.Screen
+          options={{ headerShown: false }}
+          name="ExploreScreen"
+          component={ExploreScreen}
         />
         {/* <Stack.Screen name="PushNotifyScreen" component={PushNotifyScreen} />
       <Stack.Screen name="SocialAuthScreen" component={SocialAuthScreen} />
