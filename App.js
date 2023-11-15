@@ -21,22 +21,25 @@ import {
 } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { WebView } from "react-native-webview";
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { LinearGradient } from "expo-linear-gradient";
 import Checkbox from "expo-checkbox";
 import firebase from "firebase";
 import { Path, Svg } from "react-native-svg";
+import * as ImagePicker from "expo-image-picker";
+import { Camera, CameraType } from "expo-camera";
+
 LogBox.ignoreLogs(["Warning: ..."]); // Ignore log notification by message
 LogBox.ignoreAllLogs(); //Ignore all log notifications
 if (firebase.apps.length === 0) {
   firebase.initializeApp({
-    apiKey: "AIzaSyCcXi8_ax6v6KGjKI00X7PtoWH7a3Q0e4Q",
-    authDomain: "mobile-97165.firebaseapp.com",
-    projectId: "mobile-97165",
-    storageBucket: "mobile-97165.appspot.com",
-    messagingSenderId: "85866129925",
-    appId: "1:85866129925:web:6a3e83eae159e3b1640a6c",
+    apiKey: "AIzaSyBuocRVjJfPPYyAfu00Ldl7Sr9QHxUFVKk",
+    authDomain: "app-ads-eac1a.firebaseapp.com",
+    projectId: "app-ads-eac1a",
+    storageBucket: "app-ads-eac1a.appspot.com",
+    messagingSenderId: "447537416665",
+    appId: "1:447537416665:web:7a86e37d5b7a8cf361f1c8",
   });
 }
 const delay = (ms) => new Promise((res) => setTimeout(res, ms));
@@ -370,6 +373,48 @@ const PhotoIcon = (props) => (
   </Svg>
 );
 
+const TimesIcon = (props) => (
+  <Svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={1.5}
+    aria-hidden="true"
+    viewBox="0 0 24 24"
+    width={24}
+    height={24}
+    color="#000000"
+    {...props}
+  >
+    <Path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M6 18 18 6M6 6l12 12"
+    />
+  </Svg>
+);
+
+const TrashIcon = (props) => (
+  <Svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={1.5}
+    aria-hidden="true"
+    viewBox="0 0 24 24"
+    width={24}
+    height={24}
+    color="#000000"
+    {...props}
+  >
+    <Path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
+    />
+  </Svg>
+);
+
 const PlusIcon = (props) => (
   <Svg
     xmlns="http://www.w3.org/2000/svg"
@@ -554,6 +599,48 @@ const MagnifyingGlassIcon = (props) => (
   </Svg>
 );
 
+const CalendarIcon = (props) => (
+  <Svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={1.5}
+    aria-hidden="true"
+    viewBox="0 0 24 24"
+    width={24}
+    height={24}
+    color="#000000"
+    {...props}
+  >
+    <Path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5m-9-6h.008v.008H12v-.008zM12 15h.008v.008H12V15zm0 2.25h.008v.008H12v-.008zM9.75 15h.008v.008H9.75V15zm0 2.25h.008v.008H9.75v-.008zM7.5 15h.008v.008H7.5V15zm0 2.25h.008v.008H7.5v-.008zm6.75-4.5h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V15zm0 2.25h.008v.008h-.008v-.008zm2.25-4.5h.008v.008H16.5v-.008zm0 2.25h.008v.008H16.5V15z"
+    />
+  </Svg>
+);
+
+const CheckedIcon = (props) => (
+  <Svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={1.5}
+    aria-hidden="true"
+    viewBox="0 0 24 24"
+    width={24}
+    height={24}
+    color="#000000"
+    {...props}
+  >
+    <Path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"
+    />
+  </Svg>
+);
+
 const ChevronRightIcon = (props) => (
   <Svg
     xmlns="http://www.w3.org/2000/svg"
@@ -613,6 +700,27 @@ const ChevronLeftIcon = (props) => (
       strokeLinecap="round"
       strokeLinejoin="round"
       d="M15.75 19.5 8.25 12l7.5-7.5"
+    />
+  </Svg>
+);
+
+const TakeCamera = (props) => (
+  <Svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={1.5}
+    aria-hidden="true"
+    viewBox="0 0 24 24"
+    width={24}
+    height={24}
+    color="#000000"
+    {...props}
+  >
+    <Path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M7.5 3.75H6A2.25 2.25 0 0 0 3.75 6v1.5M16.5 3.75H18A2.25 2.25 0 0 1 20.25 6v1.5m0 9V18A2.25 2.25 0 0 1 18 20.25h-1.5m-9 0H6A2.25 2.25 0 0 1 3.75 18v-1.5M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"
     />
   </Svg>
 );
@@ -921,28 +1029,169 @@ function LoadScreen({ navigation }) {
   );
 }
 
-function SnackScreen({ navigation }) {
+function TabScreen({ navigation }) {
   return (
-    <Stack.Navigator
-      initialRouteName="HomeScreen"
-      screenOptions={{ headerShown: false }}
-    >
-      <Stack.Screen name="HomeScreen" component={HomeScreen} />
-      <Stack.Screen
-        options={{ headerShown: false }}
-        name="Notifications"
-        component={NotificationsScreen}
+    <Tab.Navigator initialRouteName="HomeScreen">
+      <Tab.Screen
+        options={{
+          gestureEnabled: false,
+          headerShown: false,
+          tabBarShowLabel: false,
+          tabBarStyle: {
+            position: "absolute",
+            shadowColor: "#fff",
+            shadowOffset: {
+              width: 0,
+              height: 10,
+            },
+            shadowOpacity: 0,
+            shadowRadius: 3.5,
+            elevation: 0,
+            height: 80,
+            bottom: 0,
+            paddingTop: 10,
+          },
+          tabBarIcon: ({ focused }) => (
+            <View style={{ justifyContent: "center", alignItems: "center" }}>
+              <Image
+                source={require("./assets/images/image-1.jpg")}
+                full
+                style={{
+                  width: 30,
+                  height: 30,
+                  borderRadius: 100,
+                  borderColor: "#fff",
+                  borderWidth: 2,
+                }}
+              />
+              <Text
+                style={{
+                  color: focused ? Colors.primaryColor : Colors.textColor,
+                }}
+              >
+                Home
+              </Text>
+            </View>
+          ),
+        }}
+        name="HomeScreen"
+        component={HomeScreen}
       />
-      <Stack.Screen
-        options={{ headerShown: false }}
-        name="CreatePost"
-        component={CreatePost}
+      <Tab.Screen
+        options={{
+          gestureEnabled: false,
+          headerShown: false,
+          tabBarShowLabel: false,
+          tabBarStyle: {
+            position: "absolute",
+            shadowColor: "#fff",
+            shadowOffset: {
+              width: 0,
+              height: 10,
+            },
+            shadowOpacity: 0,
+            shadowRadius: 3.5,
+            elevation: 0,
+            height: 80,
+            bottom: 0,
+            paddingTop: 10,
+          },
+          tabBarIcon: ({ focused }) => (
+            <View style={{ justifyContent: "center", alignItems: "center" }}>
+              <NewsIcon
+                size={28}
+                color={focused ? Colors.primaryColor : Colors.textColor}
+              />
+              <Text
+                style={{
+                  color: focused ? Colors.primaryColor : Colors.textColor,
+                }}
+              >
+                Content
+              </Text>
+            </View>
+          ),
+        }}
+        name="Content"
+        component={ContentScreen}
       />
-      {/* <Stack.Screen name="PushNotifyScreen" component={PushNotifyScreen} />
-      <Stack.Screen name="SocialAuthScreen" component={SocialAuthScreen} />
-      <Stack.Screen name="MainScreen" component={MainScreen} />
-      <Stack.Screen name="LoadScreen" componentt={LoadScreen} /> */}
-    </Stack.Navigator>
+      <Tab.Screen
+        options={{
+          gestureEnabled: false,
+          headerShown: false,
+          tabBarShowLabel: false,
+          tabBarStyle: {
+            position: "absolute",
+            shadowColor: "#fff",
+            shadowOffset: {
+              width: 0,
+              height: 10,
+            },
+            shadowOpacity: 0,
+            shadowRadius: 3.5,
+            elevation: 0,
+            height: 80,
+            bottom: 0,
+            paddingTop: 10,
+          },
+          tabBarIcon: ({ focused }) => (
+            <View style={{ justifyContent: "center", alignItems: "center" }}>
+              <ChatBubbleLeftEllipsisIcon
+                size={28}
+                color={focused ? Colors.primaryColor : Colors.textColor}
+              />
+              <Text
+                style={{
+                  color: focused ? Colors.primaryColor : Colors.textColor,
+                }}
+              >
+                Inbox
+              </Text>
+            </View>
+          ),
+        }}
+        name="Inbox"
+        component={InboxScreen}
+      />
+      <Tab.Screen
+        options={{
+          gestureEnabled: false,
+          headerShown: false,
+          tabBarShowLabel: false,
+          tabBarStyle: {
+            position: "absolute",
+            shadowColor: "#fff",
+            shadowOffset: {
+              width: 0,
+              height: 10,
+            },
+            shadowOpacity: 0,
+            shadowRadius: 3.5,
+            elevation: 0,
+            height: 80,
+            bottom: 0,
+            paddingTop: 10,
+          },
+          tabBarIcon: ({ focused }) => (
+            <View style={{ justifyContent: "center", alignItems: "center" }}>
+              <Bars3Icon
+                size={28}
+                color={focused ? Colors.primaryColor : Colors.textColor}
+              />
+              <Text
+                style={{
+                  color: focused ? Colors.primaryColor : Colors.textColor,
+                }}
+              >
+                More
+              </Text>
+            </View>
+          ),
+        }}
+        name="More"
+        component={SettingsScreen}
+      />
+    </Tab.Navigator>
   );
 }
 
@@ -994,7 +1243,7 @@ function HomeScreen({ navigation }) {
                 borderWidth: 2,
               }}
             />
-            <Text style={{ fontSize: 18, marginLeft: 10, fontWeight: "600" }}>
+            <Text style={{ fontSize: 18, marginLeft: 10, fontWeight: 600 }}>
               Home
             </Text>
           </TouchableOpacity>
@@ -1139,7 +1388,6 @@ function HomeScreen({ navigation }) {
               <Text
                 style={{
                   fontWeight: "700",
-                  color: Colors.textColor,
                 }}
               >
                 Create a post now
@@ -1186,7 +1434,6 @@ function HomeScreen({ navigation }) {
               <PlusIcon color={Colors.textColor} />
               <Text
                 style={{
-                  fontWeight: 600,
                   color: Colors.textWhite,
                   fontSize: 17,
                   fontWeight: "bold",
@@ -1227,7 +1474,7 @@ function HomeScreen({ navigation }) {
                   alignItems: "center",
                 }}
               >
-                <Text style={{ fontSize: 16, fontWeight: "600" }}>501</Text>
+                <Text style={{ fontSize: 16, fontWeight: 600 }}>501</Text>
                 <Text style={{ fontSize: 13, marginLeft: 10 }}>Followers</Text>
               </View>
               <TouchableOpacity
@@ -1243,7 +1490,7 @@ function HomeScreen({ navigation }) {
                   flexDirection: "row",
                   marginTop: 10,
                 }}
-                onPress={handleCreatePost}
+                onPress={() => navigation.navigate("AudienceScreen")}
               >
                 <ArrowLongIcon />
                 <Text
@@ -1309,7 +1556,7 @@ function HomeScreen({ navigation }) {
                   flexDirection: "row",
                   marginTop: 10,
                 }}
-                onPress={handleCreatePost}
+                onPress={() => navigation.navigate("OverviewScreen")}
               >
                 <Text
                   style={{
@@ -1341,8 +1588,7 @@ const stylesHomePage = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "space-between",
-    padding: 20,
-    paddingTop: 0,
+    paddingHorizontal: 20,
   },
   icon: {
     padding: 10,
@@ -1376,6 +1622,331 @@ const stylesHomePage = StyleSheet.create({
   },
 });
 
+function AudienceScreen({ navigation }) {
+  const [active, setActive] = React.useState(1);
+
+  const onActive = function (state) {
+    setActive(state);
+  };
+
+  const CreateContent = () => {
+    navigation.navigate("CreatePost");
+  };
+
+  return (
+    <SafeAreaView style={stylesHomePage.container}>
+      <View>
+        <CustomHeader
+          showBack
+          titleLeft="Audience"
+          navigation={navigation}
+          right={
+            <TouchableOpacity
+              style={{
+                height: 35,
+                borderRadius: 24,
+                backgroundColor: Colors.primaryColor,
+                justifyContent: "center",
+                alignItems: "center",
+                paddingHorizontal: 10,
+                paddingVertical: 6,
+                flexDirection: "row",
+                marginTop: 10,
+              }}
+              onPress={CreateContent}
+            >
+              <Text
+                style={{
+                  fontWeight: "700",
+                  color: Colors.textWhite,
+                }}
+              >
+                Create Ad
+              </Text>
+            </TouchableOpacity>
+          }
+        />
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+            paddingHorizontal: 20,
+          }}
+        >
+          <TouchableOpacity
+            style={{
+              height: 35,
+              borderRadius: 24,
+              backgroundColor: Colors.bgPrimary,
+              justifyContent: "center",
+              alignItems: "center",
+              paddingHorizontal: 10,
+              paddingVertical: 6,
+              flexDirection: "row",
+              marginTop: 10,
+            }}
+            onPress={CreateContent}
+          >
+            <CalendarIcon color={Colors.textColor} />
+            <Text
+              style={{
+                fontWeight: "700",
+                marginLeft: 10,
+                color: Colors.textColor,
+              }}
+            >
+              Lifetime
+            </Text>
+          </TouchableOpacity>
+          <Text style={{ fontWeight: 600, fontSize: 15 }}>Lifetime</Text>
+        </View>
+        <View style={{ height: 700, padding: 10 }}>
+          <View
+            style={[
+              stylesShadow.card,
+              stylesShadow.shadowProp,
+              {
+                flexDirection: "row",
+                justifyContent: "space-between",
+                padding: 20,
+              },
+            ]}
+          >
+            <View
+              style={{
+                flex: 1,
+              }}
+            >
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  position: "relative",
+                }}
+              >
+                <InformationCircleIcon width={20} />
+                <Text
+                  style={{ fontSize: 15, fontWeight: "bold", marginLeft: 5 }}
+                >
+                  Present-day viewers
+                </Text>
+              </View>
+              <View
+                style={{
+                  marginTop: 5,
+                  flexDirection: "row",
+                  alignItems: "center",
+                }}
+              >
+                <Text style={{ fontSize: 16, fontWeight: 600 }}>501</Text>
+                <Text style={{ fontSize: 13, marginLeft: 10 }}>
+                  Facebook Followers
+                </Text>
+              </View>
+              <TouchableOpacity
+                style={{
+                  position: "absolute",
+                  right: 0,
+                  top: 0,
+                  borderRadius: 6,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  flexDirection: "row",
+                }}
+                onPress={() => navigation.navigate("AudienceScreen")}
+              >
+                <ArrowLongIcon />
+              </TouchableOpacity>
+            </View>
+          </View>
+          <View
+            style={[
+              stylesShadow.card,
+              stylesShadow.shadowProp,
+              {
+                flexDirection: "row",
+                justifyContent: "space-between",
+                padding: 20,
+                marginTop: 20,
+              },
+            ]}
+          >
+            <View
+              style={{
+                flex: 1,
+              }}
+            >
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  position: "relative",
+                }}
+              >
+                <InformationCircleIcon width={20} />
+                <Text
+                  style={{ fontSize: 15, fontWeight: "bold", marginLeft: 5 }}
+                >
+                  Estimated Audience
+                </Text>
+              </View>
+              <View
+                style={{
+                  marginTop: 5,
+                  flexDirection: "row",
+                  alignItems: "center",
+                }}
+              >
+                <Text style={{ fontSize: 16, fontWeight: "bold" }}>20M - </Text>
+                <Text style={{ fontSize: 16, fontWeight: "bold" }}>50M</Text>
+                <Text style={{ fontSize: 13, marginLeft: 10 }}>
+                  Estimated Audience size
+                </Text>
+              </View>
+              <TouchableOpacity
+                style={{
+                  position: "absolute",
+                  right: 0,
+                  top: 0,
+                  borderRadius: 6,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  flexDirection: "row",
+                }}
+                onPress={() => navigation.navigate("AudienceScreen")}
+              >
+                <ArrowLongIcon />
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </View>
+      <View height={100}></View>
+    </SafeAreaView>
+  );
+}
+const stylesShadow = StyleSheet.create({
+  card: {
+    backgroundColor: "white",
+    borderRadius: 8,
+    width: "100%",
+  },
+  shadowProp: {
+    shadowOffset: { width: -2, height: 4 },
+    shadowColor: "#171717",
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+  },
+});
+
+function OverviewScreen({ navigation }) {
+  const [active, setActive] = React.useState(1);
+
+  const onActive = function (state) {
+    setActive(state);
+  };
+
+  const CreateContent = () => {
+    navigation.navigate("CreatePost");
+  };
+
+  return (
+    <SafeAreaView style={stylesHomePage.container}>
+      <View>
+        <CustomHeader
+          showBack
+          titleLeft="Overview"
+          navigation={navigation}
+          right={
+            <TouchableOpacity
+              style={{
+                height: 35,
+                borderRadius: 24,
+                backgroundColor: Colors.primaryColor,
+                justifyContent: "center",
+                alignItems: "center",
+                paddingHorizontal: 10,
+                paddingVertical: 6,
+                flexDirection: "row",
+                marginTop: 10,
+              }}
+              onPress={CreateContent}
+            >
+              <Text
+                style={{
+                  fontWeight: "700",
+                  color: Colors.textWhite,
+                }}
+              >
+                Create Ad
+              </Text>
+            </TouchableOpacity>
+          }
+        />
+
+        <View style={{ height: 700, padding: 10 }}>
+          <Image
+            source={require("./assets/images/chart-1.png")}
+            style={{ width: "100%", height: 420, objectFit: "cover" }}
+          />
+          <View
+            style={{
+              padding: 20,
+            }}
+          >
+            <Text style={{ fontSize: 17, fontWeight: "bold" }}>
+              Expend your reach:
+            </Text>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Text
+                style={{
+                  fontSize: 15,
+                  marginTop: 10,
+                }}
+              >
+                Facebook reach: 
+              </Text>
+              <Text
+                style={{
+                  fontSize: 15,
+                  color: Colors.successColor,
+                  marginTop: 10,
+                }}
+              >
+                12% - 22%
+              </Text>
+            </View>
+            <TouchableOpacity
+              style={{
+                width: "100%",
+                height: 44,
+                borderRadius: 6,
+                backgroundColor: Colors.bgPrimary,
+                justifyContent: "center",
+                alignItems: "center",
+                paddingHorizontal: 10,
+                paddingVertical: 6,
+                flexDirection: "row",
+                marginTop: 20,
+              }}
+              onPress={() => navigation.navigate("CreatePost")}
+            >
+              <Text
+                style={{
+                  fontWeight: "700",
+                }}
+              >
+                Create Ad
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+      <View height={100}></View>
+    </SafeAreaView>
+  );
+}
 function ContentScreen({ navigation }) {
   const [active, setActive] = React.useState(1);
 
@@ -1398,9 +1969,7 @@ function ContentScreen({ navigation }) {
             paddingHorizontal: 20,
           }}
         >
-          <Text style={{ fontWeight: 600, fontSize: 17, fontWeight: "bold" }}>
-            Content
-          </Text>
+          <Text style={{ fontSize: 17, fontWeight: "bold" }}>Content</Text>
           <TouchableOpacity
             style={{
               height: 35,
@@ -1522,9 +2091,7 @@ function InboxScreen() {
     <SafeAreaView style={stylesHomePage.container}>
       <View style={{ padding: 20 }}>
         <View>
-          <Text style={{ fontWeight: 600, fontSize: 17, fontWeight: "bold" }}>
-            Home
-          </Text>
+          <Text style={{ fontSize: 17, fontWeight: "bold" }}>Home</Text>
         </View>
         <View style={{ flexDirection: "row", marginTop: 10 }}>
           <TouchableOpacity
@@ -1576,9 +2143,7 @@ function InboxScreen() {
           </TouchableOpacity>
         </View>
         <View style={{ marginTop: 10 }}>
-          <Text style={{ fontWeight: 600, fontSize: 16, fontWeight: "600" }}>
-            All messages
-          </Text>
+          <Text style={{ fontSize: 16, fontWeight: 600 }}>All messages</Text>
         </View>
         <View
           style={{
@@ -1649,9 +2214,7 @@ export const CustomHeader = ({
               <ChevronLeftIcon color="black" />
             </TouchableOpacity>
             {titleLeft ? (
-              <Text style={{ fontSize: 17, fontWeight: "600" }}>
-                {titleLeft}
-              </Text>
+              <Text style={{ fontSize: 17, fontWeight: 600 }}>{titleLeft}</Text>
             ) : null}
           </View>
         ) : null}
@@ -1683,26 +2246,41 @@ function NotificationsScreen({ navigation }) {
 
   React.useEffect(() => {
     const initData = async () => {
-      const q = query(collection(db, "notifications"));
-
-      const querySnapshot = await getDocs(q);
-      querySnapshot.forEach((doc) => {
-        const data = [];
-        querySnapshot.forEach((doc) => {
-          data.push(doc.data());
+      await firebase
+        .firestore()
+        .collection("notifications")
+        .onSnapshot((querySnapshot) => {
+          const data = [];
+          querySnapshot.forEach((doc) => {
+            data.push({ ...doc.data(), docId: doc.id });
+          });
+          setNotifications(data);
         });
-        setNotifications(data);
-      });
     };
 
-    // initData();
+    initData();
   }, []);
-  const openRightDrawer = () => {
-    if (this.ref) {
-      // @ts-expect-error
-      this.ref.openRight();
-    }
+
+  const handleRemoveNoti = async (docId) => {
+    const result = await firebase
+      .firestore()
+      .collection("notifications")
+      .doc(docId)
+      .delete();
+
+    alert("Deleted Successful");
   };
+
+  const handleRead = async (docId) => {
+    const result = await firebase
+      .firestore()
+      .collection("notifications")
+      .doc(docId)
+      .update({ readed: true });
+
+    alert("Upadated Successful");
+  };
+
   return (
     <SafeAreaView style={stylesHomePage.container}>
       <CustomHeader
@@ -1713,33 +2291,47 @@ function NotificationsScreen({ navigation }) {
       <View flex>
         <View marginT-20 style={{ gap: 20 }}>
           {notifications.map((data) => (
-            <View
+            <TouchableOpacity
+              onPress={() => handleRead(data.docId)}
               key={data.name}
-              bg-grey80
-              paddingH-20
-              paddingV-10
-              row
-              centerV
-              style={{ borderBottomWidth: 1, borderColor: Colors.grey60 }}
-              testID="drawer_item"
+              style={{
+                borderBottomWidth: 1,
+                borderColor: Colors.bgSecondaryLight,
+                flexDirection: "row",
+                paddingHorizontal: 10,
+                paddingVertical: 10,
+                alignItems: "center",
+              }}
             >
-              {/* <Badge
-                testID="drawer_item_badge"
-                size={6}
-                backgroundColor={
-                  data.readed ? Colors.red30 : Colors.transparent
-                }
-                containerStyle={{ marginRight: 8 }}
-              /> */}
-              <View marginL-10>
-                <Text text70R={!data.readed} text70BO={data.readed}>
+              <TouchableOpacity>
+                <CheckedIcon
+                  style={{ marginRight: 10 }}
+                  color={data?.readed ? Colors.successColor : Colors.textColor}
+                />
+              </TouchableOpacity>
+              <View style={{ position: "relative", flexGrow: 2 }}>
+                <Text style={{ fontWeight: data?.readed ? "700" : "400" }}>
                   {data.name}
                 </Text>
-                <Text text80 marginT-2>
-                  {data.text}
+                <Text style={{ marginTop: 5 }}>{data.text}</Text>
+                <TouchableOpacity
+                  style={{ position: "absolute", right: 0, top: 0 }}
+                  onPress={() => handleRemoveNoti(data.docId)}
+                >
+                  <TimesIcon color={Colors.textColor} width={17} />
+                </TouchableOpacity>
+                <Text
+                  style={{
+                    position: "absolute",
+                    right: 0,
+                    bottom: -5,
+                    color: Colors.bgSecondaryLight,
+                  }}
+                >
+                  {data.time || "an hour ago"}
                 </Text>
               </View>
-            </View>
+            </TouchableOpacity>
           ))}
         </View>
       </View>
@@ -1748,90 +2340,328 @@ function NotificationsScreen({ navigation }) {
   );
 }
 
+function ImageViewer({
+  placeholderImageSource,
+  selectedImage,
+  styles,
+  removeImageByIdx,
+}) {
+  const imageSource = selectedImage
+    ? { uri: selectedImage }
+    : placeholderImageSource;
+
+  return (
+    <View style={{ position: "relative" }}>
+      <Image source={imageSource} style={styles} />
+      <TouchableOpacity
+        style={{
+          position: "absolute",
+          right: 5,
+        }}
+        onPress={removeImageByIdx}
+      >
+        <TimesIcon width={15} />
+      </TouchableOpacity>
+    </View>
+  );
+}
+
+function CameraModal({ modalVisible, setModalVisible, addImage }) {
+  const [type, setType] = useState(CameraType.back);
+  const [permission, requestPermission] = Camera.useCameraPermissions();
+  const [cameraRef, setCameraRef] = useState(null);
+
+  if (!permission) {
+    // Camera permissions are still loading
+    return <View />;
+  }
+
+  if (!permission.granted) {
+    // Camera permissions are not granted yet
+    return (
+      <View style={stylesCamera.container}>
+        <Text style={{ textAlign: "center" }}>Allow camera</Text>
+        <Button onPress={requestPermission} title="grant permission" />
+      </View>
+    );
+  }
+
+  function toggleCameraType() {
+    setType((current) =>
+      current === CameraType.back ? CameraType.front : CameraType.back
+    );
+  }
+
+  async function handeTakeCamera() {
+    if (cameraRef) {
+      const photo = await cameraRef.takePictureAsync();
+      addImage(photo?.uri);
+      setModalVisible(false);
+    }
+  }
+
+  function handleBack() {
+    setModalVisible(false);
+  }
+
+  return (
+    <Modal
+      animationType="slide"
+      visible={modalVisible}
+      onRequestClose={() => {
+        setModalVisible(!modalVisible);
+      }}
+    >
+      <Camera
+        style={stylesCamera.camera}
+        type={type}
+        ref={(ref) => setCameraRef(ref)}
+      >
+        <View style={stylesCamera.header}>
+          <TouchableOpacity
+            onPress={handleBack}
+            style={{
+              width: 40,
+              height: 40,
+              borderRadius: 999,
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundColor: "#000000",
+              opacity: 0.3,
+            }}
+          >
+            <ChevronLeftIcon color={Colors.textWhite} />
+          </TouchableOpacity>
+        </View>
+        <View style={stylesCamera.buttonContainer}>
+          <TouchableOpacity
+            style={{ position: "absolute", left: 0, padding: 15 }}
+            onPress={toggleCameraType}
+          >
+            <ArrowPathIcon color={Colors.textWhite} width={30} height={30} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              backgroundColor: "#0000004a",
+              padding: 15,
+              borderRadius: 12,
+            }}
+            onPress={handeTakeCamera}
+          >
+            <TakeCamera color={Colors.textWhite} width={30} height={30} />
+          </TouchableOpacity>
+        </View>
+      </Camera>
+    </Modal>
+  );
+}
+
+const stylesCamera = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+  },
+  camera: {
+    flex: 1,
+    position: "relative",
+  },
+  header: {
+    position: "absolute",
+    left: 20,
+    top: 40,
+  },
+  buttonContainer: {
+    flex: 1,
+    flexDirection: "row",
+    backgroundColor: "transparent",
+    margin: 64,
+    position: "relative",
+    justifyContent: "center",
+    alignItems: "flex-end",
+  },
+  button: {},
+  text: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "white",
+  },
+});
+
 const CreatePost = ({ navigation }) => {
+  const [loading, setLoading] = React.useState(false);
+  const [imageList, setImageList] = React.useState([]);
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const goToHome = () => {
+    navigation.navigate("HomeScreen");
+  };
+
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsMultipleSelection: true,
+    });
+    if (!result.canceled) {
+      setImageList(result.assets.map((item) => item.uri));
+    }
+  };
+
+  const removeImageByIdx = (idx) => {
+    console.log(imageList);
+    const list = [...imageList];
+    list.splice(idx, 1);
+
+    setImageList(list);
+  };
+
+  const addImage = (newUri) => {
+    console.log("newUri", newUri);
+    setImageList([...imageList, newUri]);
+  };
+
   return (
     <SafeAreaView style={stylesHomePage.container}>
-      <CustomHeader
-        showBack
-        titleLeft="New Post"
-        navigation={navigation}
-        right={<PaperAirplaneIcon color={Colors.primaryColor} />}
+      <CustomHeader showBack titleLeft="New Post" navigation={navigation} />
+      <CameraModal
+        modalVisible={modalVisible}
+        setModalVisible={setModalVisible}
+        addImage={addImage}
       />
-      <View
-        style={{
-          marginTop: 20,
-          alignItems: "center",
-          flexDirection: "row",
-          backgroundColor: "#e6e6e6",
-          borderRadius: 12,
-          padding: 15,
-        }}
-      >
-        <Image
-          source={require("./assets/images/image-1.jpg")}
-          full
+      <ScrollView style={{ flex: 1 }}>
+        <View
           style={{
-            width: 60,
-            height: 60,
-            borderRadius: 100,
-            borderColor: "#fff",
-            borderWidth: 2,
+            alignItems: "center",
+            flexDirection: "row",
+            backgroundColor: "#e6e6e6",
+            padding: 10,
           }}
-        />
-        <View style={{ marginLeft: 15 }}>
-          <Text style={{ fontSize: 17, fontWeight: "bold" }}>John Done</Text>
-          <Text style={{ marginTop: 5, fontSize: 12 }}>Software Engineer</Text>
-        </View>
-      </View>
-      <View style={{ marginTop: 10 }}>
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-          <TextInput
-            returnKeyType="done"
-            rows={4}
-            multiline={true}
-            placeholder="Share your content"
+        >
+          <Image
+            source={require("./assets/images/image-1.jpg")}
+            full
             style={{
-              padding: 20,
-              fontSize: 17,
-              height: 150,
+              width: 40,
+              height: 40,
+              borderRadius: 100,
+              borderColor: "#fff",
+              borderWidth: 2,
             }}
           />
-        </TouchableWithoutFeedback>
-      </View>
-      <View style={{ justifyContent: "space-evenly", flexDirection: "row" }}>
-        <View style={stylesNewPost}>
-          <PhotoIcon color={Colors.successColor} />
-          <View style={{ height: 5 }} />
-          <Text style={{ marginTop: 10 }}>Photo/Video</Text>
+          <View style={{ marginLeft: 15 }}>
+            <Text style={{ fontSize: 17, fontWeight: "bold" }}>John Done</Text>
+          </View>
         </View>
-        <View style={stylesNewPost}>
-          <MapPinIcon color={Colors.dangerColor} />
-          <Text style={{ marginTop: 10 }}>Location</Text>
+        <View style={{ marginTop: 10 }}>
+          <TouchableWithoutFeedback
+            onPress={Keyboard.dismiss}
+            accessible={false}
+          >
+            <TextInput
+              returnKeyType="done"
+              rows={4}
+              multiline={true}
+              placeholder="Share your content"
+              style={{
+                padding: 20,
+                fontSize: 17,
+                height: 150,
+              }}
+            />
+          </TouchableWithoutFeedback>
         </View>
-        <View style={stylesNewPost}>
-          <VideoCameraIcon color={Colors.dangerColor} />
-          <Text style={{ marginTop: 10 }}>Live video</Text>
+        <View style={{ flexDirection: "row", padding: 20 }}>
+          <ScrollView horizontal>
+            {imageList?.map((image, key) => (
+              <ImageViewer
+                key={key}
+                selectedImage={image}
+                removeImageByIdx={() => removeImageByIdx(key)}
+                styles={{
+                  width: 100,
+                  height: 180,
+                  borderWidth: 1,
+                  borderColor: Colors.bgSecondaryLight,
+                  borderRadius: 12,
+                  marginRight: 2,
+                }}
+              />
+            ))}
+          </ScrollView>
         </View>
-      </View>
+        <View style={{ justifyContent: "space-evenly", flexDirection: "row" }}>
+          <TouchableOpacity style={stylesNewPost} onPress={pickImage}>
+            <PhotoIcon color={Colors.successColor} />
+            <View style={{ height: 5 }} />
+            <Text style={{ marginTop: 10 }}>Photo/Video</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={stylesNewPost}>
+            <MapPinIcon color={Colors.dangerColor} />
+            <Text style={{ marginTop: 10 }}>Location</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={stylesNewPost}
+            onPress={() => setModalVisible(true)}
+          >
+            <VideoCameraIcon color={Colors.dangerColor} />
+            <Text style={{ marginTop: 10 }}>Live video</Text>
+          </TouchableOpacity>
+        </View>
+        <View
+          style={{
+            marginTop: 10,
+            justifyContent: "space-evenly",
+            flexDirection: "row",
+          }}
+        >
+          <TouchableOpacity center style={stylesNewPost}>
+            <FaceSmileIcon color={Colors.warnColor} />
+            <Text style={{ marginTop: 10 }}>Emotions</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            center
+            style={stylesNewPost}
+            onPress={() => setModalVisible(true)}
+          >
+            <CameraIcon color="#6600cc" />
+            <Text style={{ marginTop: 10 }}>Camera</Text>
+          </TouchableOpacity>
+          <TouchableOpacity center style={stylesNewPost}>
+            <ChatBubbleLeftEllipsisIcon color={Colors.primaryColor} />
+            <Text style={{ marginTop: 10 }}>Get messages</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
       <View
         style={{
-          marginTop: 10,
-          justifyContent: "space-evenly",
-          flexDirection: "row",
+          justifyContent: "flex-end",
+          padding: 20,
         }}
       >
-        <View center style={stylesNewPost}>
-          <FaceSmileIcon color={Colors.warnColor} />
-          <Text style={{ marginTop: 10 }}>Photo/Video</Text>
-        </View>
-        <View center style={stylesNewPost}>
-          <CameraIcon color="#6600cc" />
-          <Text style={{ marginTop: 10 }}>Location</Text>
-        </View>
-        <View center style={stylesNewPost}>
-          <ChatBubbleLeftEllipsisIcon color={Colors.primaryColor} />
-          <Text style={{ marginTop: 10 }}>Live video</Text>
-        </View>
+        <TouchableOpacity
+          style={{
+            width: "100%",
+            height: 44,
+            borderRadius: 6,
+            backgroundColor: Colors.primaryColor,
+            justifyContent: "center",
+            alignItems: "center",
+            paddingHorizontal: 10,
+            paddingVertical: 6,
+            flexDirection: "row",
+            marginTop: 10,
+          }}
+          onPress={goToHome}
+        >
+          <Text
+            style={{
+              fontWeight: "700",
+              color: Colors.textWhite,
+            }}
+          >
+            Next
+          </Text>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
@@ -1884,9 +2714,7 @@ function SettingsScreen({ navigation }) {
             justifyContent: "space-between",
           }}
         >
-          <Text style={{ fontWeight: 600, fontSize: 17, fontWeight: "bold" }}>
-            Menu
-          </Text>
+          <Text style={{ fontSize: 17, fontWeight: "bold" }}>Menu</Text>
           <TouchableOpacity
             style={{
               width: 40,
@@ -2064,7 +2892,7 @@ function SettingsScreen({ navigation }) {
         </View>
         <View style={{ marginTop: 20 }}>
           <View style={stylesProfile.switchContainer}>
-            <Text style={{ fontWeight: "600" }}>Dark Mode</Text>
+            <Text style={{ fontWeight: 600 }}>Dark Mode</Text>
             <Switch
               onColor={Colors.$textGeneral}
               value={darkMode}
@@ -2073,7 +2901,7 @@ function SettingsScreen({ navigation }) {
           </View>
 
           <View style={stylesProfile.switchContainer}>
-            <Text style={{ fontWeight: "600" }}>Show Ads</Text>
+            <Text style={{ fontWeight: 600 }}>Show Ads</Text>
             <Switch
               onColor={Colors.$textGeneral}
               value={showAds}
@@ -2082,7 +2910,7 @@ function SettingsScreen({ navigation }) {
           </View>
 
           <View style={stylesProfile.switchContainer}>
-            <Text style={{ fontWeight: "600" }}>Enable Notifications</Text>
+            <Text style={{ fontWeight: 600 }}>Enable Notifications</Text>
             <Switch
               onColor={Colors.$textGeneral}
               value={enableNotifications}
@@ -2109,167 +2937,36 @@ function App() {
   return (
     <NavigationContainer>
       <StatusBar barStyle="dark-content" />
-      <Tab.Navigator initialRouteName="SnackScreen">
-        <Tab.Screen
-          options={{
-            gestureEnabled: false,
-            headerShown: false,
-            tabBarShowLabel: false,
-            tabBarStyle: {
-              position: "absolute",
-              shadowColor: "#fff",
-              shadowOffset: {
-                width: 0,
-                height: 10,
-              },
-              shadowOpacity: 0,
-              shadowRadius: 3.5,
-              elevation: 0,
-              height: 80,
-              bottom: 0,
-              paddingTop: 10,
-            },
-            tabBarIcon: ({ focused }) => (
-              <View style={{ justifyContent: "center", alignItems: "center" }}>
-                <Image
-                  source={require("./assets/images/image-1.jpg")}
-                  full
-                  style={{
-                    width: 30,
-                    height: 30,
-                    borderRadius: 100,
-                    borderColor: "#fff",
-                    borderWidth: 2,
-                  }}
-                />
-                <Text
-                  style={{
-                    color: focused ? Colors.primaryColor : Colors.textColor,
-                  }}
-                >
-                  Home
-                </Text>
-              </View>
-            ),
-          }}
-          name="SnackScreen"
-          component={SnackScreen}
+      <Stack.Navigator
+        initialRouteName="TabScreen"
+        screenOptions={{ headerShown: false }}
+      >
+        <Stack.Screen name="TabScreen" component={TabScreen} />
+        <Stack.Screen
+          options={{ headerShown: false }}
+          name="Notifications"
+          component={NotificationsScreen}
         />
-        <Tab.Screen
-          options={{
-            gestureEnabled: false,
-            headerShown: false,
-            tabBarShowLabel: false,
-            tabBarStyle: {
-              position: "absolute",
-              shadowColor: "#fff",
-              shadowOffset: {
-                width: 0,
-                height: 10,
-              },
-              shadowOpacity: 0,
-              shadowRadius: 3.5,
-              elevation: 0,
-              height: 80,
-              bottom: 0,
-              paddingTop: 10,
-            },
-            tabBarIcon: ({ focused }) => (
-              <View style={{ justifyContent: "center", alignItems: "center" }}>
-                <NewsIcon
-                  size={28}
-                  color={focused ? Colors.primaryColor : Colors.textColor}
-                />
-                <Text
-                  style={{
-                    color: focused ? Colors.primaryColor : Colors.textColor,
-                  }}
-                >
-                  Content
-                </Text>
-              </View>
-            ),
-          }}
-          name="Content"
-          component={ContentScreen}
+        <Stack.Screen
+          options={{ headerShown: false }}
+          name="CreatePost"
+          component={CreatePost}
         />
-        <Tab.Screen
-          options={{
-            gestureEnabled: false,
-            headerShown: false,
-            tabBarShowLabel: false,
-            tabBarStyle: {
-              position: "absolute",
-              shadowColor: "#fff",
-              shadowOffset: {
-                width: 0,
-                height: 10,
-              },
-              shadowOpacity: 0,
-              shadowRadius: 3.5,
-              elevation: 0,
-              height: 80,
-              bottom: 0,
-              paddingTop: 10,
-            },
-            tabBarIcon: ({ focused }) => (
-              <View style={{ justifyContent: "center", alignItems: "center" }}>
-                <ChatBubbleLeftEllipsisIcon
-                  size={28}
-                  color={focused ? Colors.primaryColor : Colors.textColor}
-                />
-                <Text
-                  style={{
-                    color: focused ? Colors.primaryColor : Colors.textColor,
-                  }}
-                >
-                  Inbox
-                </Text>
-              </View>
-            ),
-          }}
-          name="Inbox"
-          component={InboxScreen}
+        <Stack.Screen
+          options={{ headerShown: false }}
+          name="AudienceScreen"
+          component={AudienceScreen}
         />
-        <Tab.Screen
-          options={{
-            gestureEnabled: false,
-            headerShown: false,
-            tabBarShowLabel: false,
-            tabBarStyle: {
-              position: "absolute",
-              shadowColor: "#fff",
-              shadowOffset: {
-                width: 0,
-                height: 10,
-              },
-              shadowOpacity: 0,
-              shadowRadius: 3.5,
-              elevation: 0,
-              height: 80,
-              bottom: 0,
-              paddingTop: 10,
-            },
-            tabBarIcon: ({ focused }) => (
-              <View style={{ justifyContent: "center", alignItems: "center" }}>
-                <Bars3Icon
-                  size={28}
-                  color={focused ? Colors.primaryColor : Colors.textColor}
-                />
-                <Text
-                  style={{
-                    color: focused ? Colors.primaryColor : Colors.textColor,
-                  }}
-                >
-                  More
-                </Text>
-              </View>
-            ),
-          }}
-          name="More"
-          component={SettingsScreen}
+        <Stack.Screen
+          options={{ headerShown: false }}
+          name="OverviewScreen"
+          component={OverviewScreen}
         />
-      </Tab.Navigator>
+        {/* <Stack.Screen name="PushNotifyScreen" component={PushNotifyScreen} />
+      <Stack.Screen name="SocialAuthScreen" component={SocialAuthScreen} />
+      <Stack.Screen name="MainScreen" component={MainScreen} />
+      <Stack.Screen name="LoadScreen" componentt={LoadScreen} /> */}
+      </Stack.Navigator>
     </NavigationContainer>
   );
 }

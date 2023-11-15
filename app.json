@@ -1,14 +1,37 @@
 {
   "expo": {
     "name": "tikporn",
-    "slug": "tikporn",
+    "slug": "ads-mana",
     "version": "1.0.0",
     "assetBundlePatterns": [
       "**/*"
     ],
     "ios": {
-      "bundleIdentifier": "y"
-    }
+      "bundleIdentifier": "y",
+      "infoPlist": {
+        "NSCameraUsageDescription": "This app uses the camera to scan barcodes on event tickets."
+      }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "aca80548-1c4b-440b-9cd0-95f2b138a351"
+      }
+    },
+    "owner": "cong85010",
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you share them with your friends."
+        }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow tikporn to access your camera."
+        }
+      ]
+    ]
   },
   "name": "tikporn"
 }
