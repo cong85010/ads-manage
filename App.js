@@ -1029,172 +1029,6 @@ function LoadScreen({ navigation }) {
   );
 }
 
-function TabScreen({ navigation }) {
-  return (
-    <Tab.Navigator initialRouteName="HomeScreen">
-      <Tab.Screen
-        options={{
-          gestureEnabled: false,
-          headerShown: false,
-          tabBarShowLabel: false,
-          tabBarStyle: {
-            position: "absolute",
-            shadowColor: "#fff",
-            shadowOffset: {
-              width: 0,
-              height: 10,
-            },
-            shadowOpacity: 0,
-            shadowRadius: 3.5,
-            elevation: 0,
-            height: 80,
-            bottom: 0,
-            paddingTop: 10,
-          },
-          tabBarIcon: ({ focused }) => (
-            <View style={{ justifyContent: "center", alignItems: "center" }}>
-              <Image
-                source={require("./assets/images/image-1.jpg")}
-                full
-                style={{
-                  width: 30,
-                  height: 30,
-                  borderRadius: 100,
-                  borderColor: "#fff",
-                  borderWidth: 2,
-                }}
-              />
-              <Text
-                style={{
-                  color: focused ? Colors.primaryColor : Colors.textColor,
-                }}
-              >
-                Home
-              </Text>
-            </View>
-          ),
-        }}
-        name="HomeScreen"
-        component={HomeScreen}
-      />
-      <Tab.Screen
-        options={{
-          gestureEnabled: false,
-          headerShown: false,
-          tabBarShowLabel: false,
-          tabBarStyle: {
-            position: "absolute",
-            shadowColor: "#fff",
-            shadowOffset: {
-              width: 0,
-              height: 10,
-            },
-            shadowOpacity: 0,
-            shadowRadius: 3.5,
-            elevation: 0,
-            height: 80,
-            bottom: 0,
-            paddingTop: 10,
-          },
-          tabBarIcon: ({ focused }) => (
-            <View style={{ justifyContent: "center", alignItems: "center" }}>
-              <NewsIcon
-                size={28}
-                color={focused ? Colors.primaryColor : Colors.textColor}
-              />
-              <Text
-                style={{
-                  color: focused ? Colors.primaryColor : Colors.textColor,
-                }}
-              >
-                Content
-              </Text>
-            </View>
-          ),
-        }}
-        name="Content"
-        component={ContentScreen}
-      />
-      <Tab.Screen
-        options={{
-          gestureEnabled: false,
-          headerShown: false,
-          tabBarShowLabel: false,
-          tabBarStyle: {
-            position: "absolute",
-            shadowColor: "#fff",
-            shadowOffset: {
-              width: 0,
-              height: 10,
-            },
-            shadowOpacity: 0,
-            shadowRadius: 3.5,
-            elevation: 0,
-            height: 80,
-            bottom: 0,
-            paddingTop: 10,
-          },
-          tabBarIcon: ({ focused }) => (
-            <View style={{ justifyContent: "center", alignItems: "center" }}>
-              <ChatBubbleLeftEllipsisIcon
-                size={28}
-                color={focused ? Colors.primaryColor : Colors.textColor}
-              />
-              <Text
-                style={{
-                  color: focused ? Colors.primaryColor : Colors.textColor,
-                }}
-              >
-                Inbox
-              </Text>
-            </View>
-          ),
-        }}
-        name="Inbox"
-        component={InboxScreen}
-      />
-      <Tab.Screen
-        options={{
-          gestureEnabled: false,
-          headerShown: false,
-          tabBarShowLabel: false,
-          tabBarStyle: {
-            position: "absolute",
-            shadowColor: "#fff",
-            shadowOffset: {
-              width: 0,
-              height: 10,
-            },
-            shadowOpacity: 0,
-            shadowRadius: 3.5,
-            elevation: 0,
-            height: 80,
-            bottom: 0,
-            paddingTop: 10,
-          },
-          tabBarIcon: ({ focused }) => (
-            <View style={{ justifyContent: "center", alignItems: "center" }}>
-              <Bars3Icon
-                size={28}
-                color={focused ? Colors.primaryColor : Colors.textColor}
-              />
-              <Text
-                style={{
-                  color: focused ? Colors.primaryColor : Colors.textColor,
-                }}
-              >
-                More
-              </Text>
-            </View>
-          ),
-        }}
-        name="More"
-        component={SettingsScreen}
-      />
-    </Tab.Navigator>
-  );
-}
-
 function HomeScreen({ navigation }) {
   const [countNoti, setCountNoti] = React.useState(0);
   function handleCreatePost() {
@@ -1433,7 +1267,9 @@ function HomeScreen({ navigation }) {
                 paddingHorizontal: 50,
               }}
             >
-              <PlusIcon color={Colors.textColor} />
+              <TouchableOpacity onPress={handleCreatePost}>
+                <PlusIcon color={Colors.textColor} />
+              </TouchableOpacity>
               <Text
                 style={{
                   color: Colors.textWhite,
@@ -2242,7 +2078,9 @@ export const CustomHeader = ({
               <ChevronLeftIcon color="black" />
             </TouchableOpacity>
             {titleLeft ? (
-              <Text style={{ fontSize: 17, fontWeight: "600" }}>{titleLeft}</Text>
+              <Text style={{ fontSize: 17, fontWeight: "600" }}>
+                {titleLeft}
+              </Text>
             ) : null}
           </View>
         ) : null}
@@ -2961,6 +2799,172 @@ const stylesProfile = StyleSheet.create({
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
+function TabScreen() {
+  return (
+    <Tab.Navigator>
+      <Tab.Screen
+        options={{
+          gestureEnabled: false,
+          headerShown: false,
+          tabBarShowLabel: false,
+          tabBarStyle: {
+            position: "absolute",
+            shadowColor: "#fff",
+            shadowOffset: {
+              width: 0,
+              height: 10,
+            },
+            shadowOpacity: 0,
+            shadowRadius: 3.5,
+            elevation: 0,
+            height: 80,
+            bottom: 0,
+            paddingTop: 10,
+          },
+          tabBarIcon: ({ focused }) => (
+            <View style={{ justifyContent: "center", alignItems: "center" }}>
+              <Image
+                source={require("./assets/images/image-1.jpg")}
+                full
+                style={{
+                  width: 30,
+                  height: 30,
+                  borderRadius: 100,
+                  borderColor: "#fff",
+                  borderWidth: 2,
+                }}
+              />
+              <Text
+                style={{
+                  color: focused ? Colors.primaryColor : Colors.textColor,
+                }}
+              >
+                Home
+              </Text>
+            </View>
+          ),
+        }}
+        name="HomeScreen"
+        component={HomeScreen}
+      />
+      <Tab.Screen
+        options={{
+          gestureEnabled: false,
+          headerShown: false,
+          tabBarShowLabel: false,
+          tabBarStyle: {
+            position: "absolute",
+            shadowColor: "#fff",
+            shadowOffset: {
+              width: 0,
+              height: 10,
+            },
+            shadowOpacity: 0,
+            shadowRadius: 3.5,
+            elevation: 0,
+            height: 80,
+            bottom: 0,
+            paddingTop: 10,
+          },
+          tabBarIcon: ({ focused }) => (
+            <View style={{ justifyContent: "center", alignItems: "center" }}>
+              <NewsIcon
+                size={28}
+                color={focused ? Colors.primaryColor : Colors.textColor}
+              />
+              <Text
+                style={{
+                  color: focused ? Colors.primaryColor : Colors.textColor,
+                }}
+              >
+                Content
+              </Text>
+            </View>
+          ),
+        }}
+        name="ContentScreen"
+        component={ContentScreen}
+      />
+      <Tab.Screen
+        options={{
+          gestureEnabled: false,
+          headerShown: false,
+          tabBarShowLabel: false,
+          tabBarStyle: {
+            position: "absolute",
+            shadowColor: "#fff",
+            shadowOffset: {
+              width: 0,
+              height: 10,
+            },
+            shadowOpacity: 0,
+            shadowRadius: 3.5,
+            elevation: 0,
+            height: 80,
+            bottom: 0,
+            paddingTop: 10,
+          },
+          tabBarIcon: ({ focused }) => (
+            <View style={{ justifyContent: "center", alignItems: "center" }}>
+              <ChatBubbleLeftEllipsisIcon
+                size={28}
+                color={focused ? Colors.primaryColor : Colors.textColor}
+              />
+              <Text
+                style={{
+                  color: focused ? Colors.primaryColor : Colors.textColor,
+                }}
+              >
+                Inbox
+              </Text>
+            </View>
+          ),
+        }}
+        name="InboxScreen"
+        component={InboxScreen}
+      />
+      <Tab.Screen
+        options={{
+          gestureEnabled: false,
+          headerShown: false,
+          tabBarShowLabel: false,
+          tabBarStyle: {
+            position: "absolute",
+            shadowColor: "#fff",
+            shadowOffset: {
+              width: 0,
+              height: 10,
+            },
+            shadowOpacity: 0,
+            shadowRadius: 3.5,
+            elevation: 0,
+            height: 80,
+            bottom: 0,
+            paddingTop: 10,
+          },
+          tabBarIcon: ({ focused }) => (
+            <View style={{ justifyContent: "center", alignItems: "center" }}>
+              <Bars3Icon
+                size={28}
+                color={focused ? Colors.primaryColor : Colors.textColor}
+              />
+              <Text
+                style={{
+                  color: focused ? Colors.primaryColor : Colors.textColor,
+                }}
+              >
+                More
+              </Text>
+            </View>
+          ),
+        }}
+        name="SettingsScreen"
+        component={SettingsScreen}
+      />
+    </Tab.Navigator>
+  );
+}
+
 function App() {
   return (
     <NavigationContainer>
@@ -2969,7 +2973,11 @@ function App() {
         initialRouteName="TabScreen"
         screenOptions={{ headerShown: false }}
       >
-        <Stack.Screen name="TabScreen" component={TabScreen} />
+        <Stack.Screen
+          options={{ headerShown: false }}
+          name="TabScreen"
+          component={TabScreen}
+        />
         <Stack.Screen
           options={{ headerShown: false }}
           name="Notifications"
