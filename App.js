@@ -3540,35 +3540,6 @@ const CreatePost = ({ navigation }) => {
               Photo/Video
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity style={stylesNewPost}>
-            <MapPinIcon color={Colors.dangerColor} />
-            <Text style={{ marginTop: 10, color: Colors.textColor }}>
-              Location
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={stylesNewPost}
-            onPress={() => setModalVisible(true)}
-          >
-            <VideoCameraIcon color={Colors.dangerColor} />
-            <Text style={{ marginTop: 10, color: Colors.textColor }}>
-              Live video
-            </Text>
-          </TouchableOpacity>
-        </View>
-        <View
-          style={{
-            marginTop: 10,
-            justifyContent: "space-evenly",
-            flexDirection: "row",
-          }}
-        >
-          <TouchableOpacity center style={stylesNewPost}>
-            <FaceSmileIcon color={Colors.warnColor} />
-            <Text style={{ marginTop: 10, color: Colors.textColor }}>
-              Emotions
-            </Text>
-          </TouchableOpacity>
           <TouchableOpacity
             center
             style={stylesNewPost}
@@ -3579,10 +3550,13 @@ const CreatePost = ({ navigation }) => {
               Camera
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity center style={stylesNewPost}>
-            <ChatBubbleLeftEllipsisIcon color={Colors.primaryColor} />
+          <TouchableOpacity
+            style={stylesNewPost}
+            onPress={() => setModalVisible(true)}
+          >
+            <VideoCameraIcon color={Colors.dangerColor} />
             <Text style={{ marginTop: 10, color: Colors.textColor }}>
-              Get messages
+              Live video
             </Text>
           </TouchableOpacity>
         </View>
