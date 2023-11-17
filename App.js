@@ -29,6 +29,7 @@ import firebase from "firebase";
 import { Path, Svg } from "react-native-svg";
 import * as ImagePicker from "expo-image-picker";
 import { Camera, CameraType } from "expo-camera";
+import { Alert } from "react-native";
 
 LogBox.ignoreLogs(["Warning: ..."]); // Ignore log notification by message
 LogBox.ignoreAllLogs(); //Ignore all log notifications
@@ -111,7 +112,7 @@ const _request = async ({ url, body, headers = {} }, cookie) => {
 };
 
 const Colors = {
-  primaryColor: "#3385ff", // Blue
+  primaryColor: "#039dc1", // Blue
   secondaryColor: "#36D7B7", // Teal
   textColor: "#595959", // Dark Gray
   textWhite: "#ffffff", // Dark Gray
@@ -131,6 +132,7 @@ const Colors = {
   bgErrorLight: "#ffcdd2", // Light Red
   bgSuccessLight: "#dcedc8", // Light Green
   bgWarnLight: "#fff9c4", // Light Yellow
+  bgPrimaryDark: "#038ac1",
 };
 
 function MainScreen({ navigation }) {
@@ -263,6 +265,48 @@ const BellIcon = (props) => (
   </Svg>
 );
 
+const MegaphoneIcon = (props) => (
+  <Svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={1.5}
+    aria-hidden="true"
+    viewBox="0 0 24 24"
+    width={24}
+    height={24}
+    color="#000000"
+    {...props}
+  >
+    <Path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M10.34 15.84a24.07 24.07 0 0 0-2.09-.09H7.5a4.5 4.5 0 1 1 0-9h.75c.704 0 1.402-.03 2.09-.09m0 9.18c.253.962.584 1.892.985 2.783.247.55.06 1.21-.463 1.511l-.657.38c-.551.318-1.26.117-1.527-.461a20.845 20.845 0 0 1-1.44-4.282m3.102.069a18.03 18.03 0 0 1-.59-4.59c0-1.586.205-3.124.59-4.59m0 9.18a23.848 23.848 0 0 1 8.835 2.535M10.34 6.66a23.847 23.847 0 0 0 8.835-2.535m0 0A23.74 23.74 0 0 0 18.795 3m.38 1.125a23.91 23.91 0 0 1 1.014 5.395m-1.014 8.855c-.118.38-.245.754-.38 1.125m.38-1.125a23.91 23.91 0 0 0 1.014-5.395m0-3.46a2.249 2.249 0 0 1 0 3.46m0-3.46a24.347 24.347 0 0 1 0 3.46"
+    />
+  </Svg>
+);
+
+const PublicIcon = (props) => (
+  <Svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={1.5}
+    aria-hidden="true"
+    viewBox="0 0 24 24"
+    width={24}
+    height={24}
+    color="#000000"
+    {...props}
+  >
+    <Path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M12 21a9.004 9.004 0 0 0 8.716-6.747M12 21a9.004 9.004 0 0 1-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 0 1 7.843 4.582M12 3a8.997 8.997 0 0 0-7.843 4.582m15.686 0A11.953 11.953 0 0 1 12 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0 1 21 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0 1 12 16.5a17.92 17.92 0 0 1-8.716-2.247m0 0A9.015 9.015 0 0 1 3 12c0-1.605.42-3.113 1.157-4.418"
+    />
+  </Svg>
+);
+
 const CameraIcon = (props) => (
   <Svg
     xmlns="http://www.w3.org/2000/svg"
@@ -329,6 +373,27 @@ const VideoCameraIcon = (props) => (
   </Svg>
 );
 
+const ClockIcon = (props) => (
+  <Svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={1.5}
+    aria-hidden="true"
+    viewBox="0 0 24 24"
+    width={24}
+    height={24}
+    color="#000000"
+    {...props}
+  >
+    <Path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"
+    />
+  </Svg>
+);
+
 const MapPinIcon = (props) => (
   <Svg
     xmlns="http://www.w3.org/2000/svg"
@@ -357,18 +422,20 @@ const MapPinIcon = (props) => (
 const PhotoIcon = (props) => (
   <Svg
     xmlns="http://www.w3.org/2000/svg"
-    fill="currentColor"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={1.5}
     aria-hidden="true"
-    viewBox="0 0 20 20"
+    viewBox="0 0 24 24"
     width={24}
     height={24}
     color="#000000"
     {...props}
   >
     <Path
-      fillRule="evenodd"
-      d="M1 5.25A2.25 2.25 0 0 1 3.25 3h13.5A2.25 2.25 0 0 1 19 5.25v9.5A2.25 2.25 0 0 1 16.75 17H3.25A2.25 2.25 0 0 1 1 14.75v-9.5zm1.5 5.81v3.69c0 .414.336.75.75.75h13.5a.75.75 0 0 0 .75-.75v-2.69l-2.22-2.219a.75.75 0 0 0-1.06 0l-1.91 1.909.47.47a.75.75 0 1 1-1.06 1.06L6.53 8.091a.75.75 0 0 0-1.06 0l-2.97 2.97zM12 7a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"
-      clipRule="evenodd"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0z"
     />
   </Svg>
 );
@@ -411,6 +478,27 @@ const TrashIcon = (props) => (
       strokeLinecap="round"
       strokeLinejoin="round"
       d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
+    />
+  </Svg>
+);
+
+const PlusOutlineIcon = (props) => (
+  <Svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={1.5}
+    aria-hidden="true"
+    viewBox="0 0 24 24"
+    width={24}
+    height={24}
+    color="#000000"
+    {...props}
+  >
+    <Path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M12 4.5v15m7.5-7.5h-15"
     />
   </Svg>
 );
@@ -637,6 +725,90 @@ const CheckedIcon = (props) => (
       strokeLinecap="round"
       strokeLinejoin="round"
       d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"
+    />
+  </Svg>
+);
+
+const LikeIcon = (props) => (
+  <Svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={1.5}
+    aria-hidden="true"
+    viewBox="0 0 24 24"
+    width={24}
+    height={24}
+    color="#000000"
+    {...props}
+  >
+    <Path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M6.633 10.5c.806 0 1.533-.446 2.031-1.08a9.041 9.041 0 0 1 2.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 0 0 .322-1.672V3a.75.75 0 0 1 .75-.75A2.25 2.25 0 0 1 16.5 4.5c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 0 1-2.649 7.521c-.388.482-.987.729-1.605.729H13.48a4.53 4.53 0 0 1-1.423-.23l-3.114-1.04a4.501 4.501 0 0 0-1.423-.23H5.904M14.25 9h2.25M5.904 18.75c.083.205.173.405.27.602.197.4-.078.898-.523.898h-.908c-.889 0-1.713-.518-1.972-1.368a12 12 0 0 1-.521-3.507c0-1.553.295-3.036.831-4.398C3.387 10.203 4.167 9.75 5 9.75h1.053c.472 0 .745.556.5.96a8.958 8.958 0 0 0-1.302 4.665 8.97 8.97 0 0 0 .654 3.375z"
+    />
+  </Svg>
+);
+
+const CommentIcon = (props) => (
+  <Svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={1.5}
+    aria-hidden="true"
+    viewBox="0 0 24 24"
+    width={24}
+    height={24}
+    color="#000000"
+    {...props}
+  >
+    <Path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 0 1 .865-.501 48.172 48.172 0 0 0 3.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z"
+    />
+  </Svg>
+);
+
+const BookMarkIcon = (props) => (
+  <Svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={1.5}
+    aria-hidden="true"
+    viewBox="0 0 24 24"
+    width={24}
+    height={24}
+    color="#000000"
+    {...props}
+  >
+    <Path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0z"
+    />
+  </Svg>
+);
+
+const ShareIcon = (props) => (
+  <Svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={1.5}
+    aria-hidden="true"
+    viewBox="0 0 24 24"
+    width={24}
+    height={24}
+    color="#000000"
+    {...props}
+  >
+    <Path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186 9.566-5.314m-9.566 7.5 9.566 5.314m0 0a2.25 2.25 0 1 0 3.935 2.186 2.25 2.25 0 0 0-3.935-2.186zm0-12.814a2.25 2.25 0 1 0 3.933-2.185 2.25 2.25 0 0 0-3.933 2.185z"
     />
   </Svg>
 );
@@ -1029,8 +1201,529 @@ function LoadScreen({ navigation }) {
   );
 }
 
+function Comments({ data, loading, styles }) {
+  console.log("data");
+  if (loading) {
+    return (
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "center",
+          alignItems: "center",
+          padding: 50,
+          height: 300,
+        }}
+      >
+        <Image
+          source={require("./assets/images/loading.gif")}
+          style={{ width: 35, height: 35 }}
+        />
+      </View>
+    );
+  }
+  if (data.length === 0) {
+    return (
+      <View
+        style={{
+          justifyContent: "center",
+          alignItems: "center",
+          padding: 50,
+        }}
+      >
+        <Image
+          source={require("./assets/images/empty.png")}
+          style={{ width: 120, height: 99, objectFit: "cover" }}
+        />
+        <Text style={{ fontWeight: "bold", marginTop: 10, fontSize: 16 }}>
+          No planer to show
+        </Text>
+        <Text
+          style={{
+            marginTop: 10,
+            fontSize: 13,
+            textAlign: "center",
+            color: Colors.textColor,
+          }}
+        >
+          Planer mentioning or tagging your company will appear here.
+        </Text>
+      </View>
+    );
+  }
+
+  return (
+    <ScrollView contentContainerStyle={styles}>
+      {data.map((item, index) => (
+        <TouchableOpacity
+          key={item.title}
+          style={[
+            stylesHomePage.card,
+            stylesHomePage.shadowProp,
+            {
+              marginTop: 10,
+              borderBottomWidth: 1,
+              borderColor: Colors.bgSecondaryLight,
+              flexDirection: "row",
+              paddingHorizontal: 10,
+              paddingVertical: 10,
+              alignItems: "center",
+            },
+          ]}
+        >
+          <Image
+            style={{
+              width: 50,
+              height: 50,
+              borderRadius: 999,
+              objectFit: "cover",
+            }}
+            source={require("./assets/images/image-1.jpg")}
+          />
+          <View style={{ position: "relative", width: '80%', flexGrow: 2, left: 10 }}>
+            <Text style={{ fontWeight: "700" }}>{item.author}</Text>
+            <Text
+              style={{
+                marginTop: 5,
+                fontWeight: "400",
+              }}
+            >
+              {item.text}
+            </Text>
+            {item.read ? null : (
+              <View
+                style={[
+                  stylesHomePage.bage,
+                  {
+                    top: 0,
+                    right: 5,
+                  },
+                ]}
+              />
+            )}
+            <Text
+              style={{
+                position: "absolute",
+                left: 0,
+                bottom: -5,
+                color: Colors.successColor,
+              }}
+            >
+              Likes: {item.likes}
+            </Text>
+            <Text
+              style={{
+                position: "absolute",
+                right: 0,
+                bottom: -5,
+                color: Colors.primaryColor,
+              }}
+            >
+              {new Date(item.timestamp).toDateString()}
+            </Text>
+            <View style={{ height: 20 }}></View>
+          </View>
+        </TouchableOpacity>
+      ))}
+    </ScrollView>
+  );
+}
+
+function Messages({ data, loading, styles }) {
+  console.log("data");
+  if (loading) {
+    return (
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "center",
+          alignItems: "center",
+          padding: 50,
+          height: 300,
+        }}
+      >
+        <Image
+          source={require("./assets/images/loading.gif")}
+          style={{ width: 35, height: 35 }}
+        />
+      </View>
+    );
+  }
+  if (data.length === 0) {
+    return (
+      <View
+        style={{
+          justifyContent: "center",
+          alignItems: "center",
+          padding: 50,
+        }}
+      >
+        <Image
+          source={require("./assets/images/empty.png")}
+          style={{ width: 120, height: 99, objectFit: "cover" }}
+        />
+        <Text style={{ fontWeight: "bold", marginTop: 10, fontSize: 16 }}>
+          No planer to show
+        </Text>
+        <Text
+          style={{
+            marginTop: 10,
+            fontSize: 13,
+            textAlign: "center",
+            color: Colors.textColor,
+          }}
+        >
+          Planer mentioning or tagging your company will appear here.
+        </Text>
+      </View>
+    );
+  }
+
+  return (
+    <ScrollView contentContainerStyle={styles}>
+      {data.map((item, index) => (
+        <TouchableOpacity
+          key={item.title}
+          style={[
+            stylesHomePage.card,
+            stylesHomePage.shadowProp,
+            {
+              marginTop: 10,
+              borderBottomWidth: 1,
+              borderColor: Colors.bgSecondaryLight,
+              flexDirection: "row",
+              paddingHorizontal: 10,
+              paddingVertical: 10,
+              alignItems: "center",
+            },
+          ]}
+        >
+          <Image
+            style={{
+              width: 50,
+              height: 50,
+              borderRadius: 999,
+              objectFit: "cover",
+            }}
+            source={require("./assets/images/image-1.jpg")}
+          />
+          <View style={{ position: "relative", width: '80%', flexGrow: 2, left: 10 }}>
+            <Text style={{ fontWeight: "700" }}>{item.sender}</Text>
+            <Text
+              style={{
+                marginTop: 5,
+                fontWeight: "400",
+              }}
+            >
+              {item.text}
+            </Text>
+            {item.read ? null : (
+              <View
+                style={[
+                  stylesHomePage.bage,
+                  {
+                    top: 0,
+                    right: 5,
+                  },
+                ]}
+              />
+            )}
+            <Text
+              style={{
+                position: "absolute",
+                right: 0,
+                bottom: -5,
+                color: Colors.primaryColor,
+              }}
+            >
+              {new Date(item.timestamp).toDateString()}
+            </Text>
+            <View style={{ height: 20 }}></View>
+          </View>
+        </TouchableOpacity>
+      ))}
+    </ScrollView>
+  );
+}
+
+function Planners({ data, loading, styles }) {
+  console.log("data");
+  if (loading) {
+    return (
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "center",
+          alignItems: "center",
+          padding: 50,
+          height: 300,
+        }}
+      >
+        <Image
+          source={require("./assets/images/loading.gif")}
+          style={{ width: 35, height: 35 }}
+        />
+      </View>
+    );
+  }
+  if (data.length === 0) {
+    return (
+      <View
+        style={{
+          justifyContent: "center",
+          alignItems: "center",
+          padding: 50,
+        }}
+      >
+        <Image
+          source={require("./assets/images/empty.png")}
+          style={{ width: 120, height: 99, objectFit: "cover" }}
+        />
+        <Text style={{ fontWeight: "bold", marginTop: 10, fontSize: 16 }}>
+          No planer to show
+        </Text>
+        <Text
+          style={{
+            marginTop: 10,
+            fontSize: 13,
+            textAlign: "center",
+            color: Colors.textColor,
+          }}
+        >
+          Planer mentioning or tagging your company will appear here.
+        </Text>
+      </View>
+    );
+  }
+
+  return (
+    <ScrollView contentContainerStyle={styles}>
+      {data.map((item, index) => (
+        <TouchableOpacity
+          key={item.title}
+          style={[
+            stylesHomePage.card,
+            stylesHomePage.shadowProp,
+            {
+              marginTop: 10,
+              borderBottomWidth: 1,
+              borderColor: Colors.bgSecondaryLight,
+              flexDirection: "row",
+              paddingHorizontal: 10,
+              paddingVertical: 10,
+              alignItems: "center",
+            },
+          ]}
+        >
+          <View style={{ position: "relative", flexGrow: 2 }}>
+            <Text style={{ fontWeight: "700" }}>{item.title}</Text>
+            <Text
+              style={{
+                marginTop: 5,
+                fontWeight: "400",
+              }}
+            >
+              {item.description}
+            </Text>
+            <Text
+              style={{
+                position: "absolute",
+                left: 0,
+                bottom: -5,
+                color: Colors.warnColor,
+              }}
+            >
+              Location: {item.location}
+            </Text>
+            <Text
+              style={{
+                position: "absolute",
+                right: 0,
+                bottom: -5,
+                color: Colors.primaryColor,
+              }}
+            >
+              {item.date + " - " + item.time || "12:30PM"}
+            </Text>
+            <View style={{ height: 20 }}></View>
+          </View>
+        </TouchableOpacity>
+      ))}
+    </ScrollView>
+  );
+}
+
+function ListPosts({ posts, loading, styles }) {
+  if (loading) {
+    return (
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "center",
+          alignItems: "center",
+          padding: 50,
+          height: 300,
+        }}
+      >
+        <Image
+          source={require("./assets/images/loading.gif")}
+          style={{ width: 35, height: 35 }}
+        />
+      </View>
+    );
+  }
+  if (posts.length === 0) {
+    return (
+      <View
+        style={{
+          justifyContent: "center",
+          alignItems: "center",
+          padding: 50,
+        }}
+      >
+        <Image
+          source={require("./assets/images/empty.png")}
+          style={{ width: 120, height: 99, objectFit: "cover" }}
+        />
+        <Text style={{ fontWeight: "bold", marginTop: 10, fontSize: 16 }}>
+          No post to show
+        </Text>
+        <Text
+          style={{
+            marginTop: 10,
+            fontSize: 13,
+            textAlign: "center",
+            color: Colors.textColor,
+          }}
+        >
+          Posts mentioning or tagging your company will appear here.
+        </Text>
+      </View>
+    );
+  }
+
+  return (
+    <ScrollView contentContainerStyle={styles}>
+      {posts.map((item, index) => (
+        <View
+          key={index}
+          style={[
+            stylesHomePage.card,
+            stylesHomePage.shadowProp,
+            {
+              flexDirection: "row",
+              alignItems: "center",
+              padding: 10,
+              marginTop: 20,
+            },
+          ]}
+        >
+          <Image
+            source={require("./assets/images/image-1.jpg")}
+            full
+            style={{
+              width: 100,
+              height: 150,
+              borderRadius: 14,
+            }}
+          />
+          <View
+            style={{
+              height: 150,
+              justifyContent: "space-between",
+              marginLeft: 15,
+              flexGrow: 2,
+              width: "80%",
+            }}
+          >
+            <View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                }}
+              >
+                <ClockIcon width={15} />
+                <Text
+                  style={{
+                    marginLeft: 2,
+                    color: Colors.textColor,
+                    fontSize: 12,
+                  }}
+                >
+                  {new Date(item.createdAt).toDateString()}
+                </Text>
+              </View>
+
+              <Text
+                style={{
+                  flexShrink: 1,
+                  color: Colors.textColor,
+                  fontSize: 16,
+                  fontWeight: "600",
+                  paddingRight: 30,
+                  height: 100,
+                }}
+              >
+                {item.text}
+              </Text>
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                width: "80%",
+                height: 30,
+                justifyContent: "space-around",
+              }}
+            >
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                }}
+              >
+                <LikeIcon width={20} />
+                <Text style={{ marginLeft: 2, color: Colors.textColor }}>
+                  {item.liked}
+                </Text>
+              </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  marginLeft: 20,
+                }}
+              >
+                <CommentIcon width={20} />
+                <Text style={{ marginLeft: 2, color: Colors.textColor }}>
+                  {item.comments}
+                </Text>
+              </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  marginLeft: 20,
+                }}
+              >
+                <ShareIcon width={20} />
+                <Text style={{ marginLeft: 2, color: Colors.textColor }}>
+                  {item.shared}
+                </Text>
+              </View>
+            </View>
+          </View>
+        </View>
+      ))}
+    </ScrollView>
+  );
+}
+
 function HomeScreen({ navigation }) {
+  const [loading, setLoading] = React.useState(false);
   const [countNoti, setCountNoti] = React.useState(0);
+  const [posts, setPosts] = React.useState([]);
+
   function handleCreatePost() {
     navigation.navigate("CreatePost");
   }
@@ -1039,375 +1732,505 @@ function HomeScreen({ navigation }) {
     navigation.navigate("ExploreScreen");
   }
 
+  function handleContent() {
+    navigation.navigate("ContentScreen");
+  }
+
   function handleGoNotifications() {
     navigation.navigate("Notifications");
   }
 
   React.useEffect(() => {
-    const initData = () => {
-      const q = query(
-        collection(db, "notifications"),
-        where("readed", "==", true)
-      );
-      onSnapshot(q, (querySnapshot) => {
-        const data = [];
-        console.log(querySnapshot.size);
-        setCountNoti(querySnapshot.size);
-      });
+    const initData = async () => {
+      await firebase
+        .firestore()
+        .collection("notifications")
+        .where("readed", "==", false)
+        .onSnapshot((querySnapshot) => {
+          setCountNoti(querySnapshot.size);
+        });
     };
-    // initData();
+    initData();
   }, []);
+
+  React.useEffect(() => {
+    const initData = async () => {
+      setLoading(true);
+      await firebase
+        .firestore()
+        .collection("posts")
+        .orderBy("createdAt", "desc")
+        .limit(3)
+        .get()
+        .then((querySnapshot) => {
+          console.log(querySnapshot.docs);
+          const data = [];
+          querySnapshot.forEach((doc) => {
+            data.push({ ...doc.data(), docId: doc.id });
+          });
+          setPosts(data);
+          setLoading(false);
+        });
+    };
+    initData();
+  }, []);
+
   return (
     <SafeAreaView style={stylesHomePage.container}>
       <ScrollView flex style={{ overflow: "scroll" }}>
         <View style={stylesHomePage.header}>
-          <TouchableOpacity
-            style={stylesHomePage.icon}
-            onPress={handleGoNotifications}
-          >
-            <BellIcon />
-          </TouchableOpacity>
           <TouchableOpacity style={stylesHomePage.icon}>
-            <Image
-              source={require("./assets/images/image-1.jpg")}
-              full
-              style={{
-                width: 30,
-                height: 30,
-                borderRadius: 100,
-                borderColor: "#fff",
-                borderWidth: 2,
-              }}
-            />
-            <Text style={{ fontSize: 18, marginLeft: 10, fontWeight: "600" }}>
-              Home
-            </Text>
-          </TouchableOpacity>
-        </View>
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            width: "100%",
-            height: 40,
-            margin: 10,
-          }}
-        >
-          <TouchableOpacity
-            style={{
-              borderRadius: 6,
-              backgroundColor: Colors.bgPrimaryLight,
-              justifyContent: "center",
-              alignItems: "center",
-              paddingHorizontal: 10,
-              paddingVertical: 6,
-            }}
-          >
-            <Text style={{ fontWeight: "700", color: Colors.primaryColor }}>
-              Manage
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={onHandleExplore}
-            style={{
-              borderRadius: 10,
-              marginLeft: 20,
-            }}
-          >
-            <Text style={{ color: Colors.textColor }}>Explore</Text>
-          </TouchableOpacity>
-        </View>
-        <View
-          style={{
-            paddingHorizontal: 10,
-            paddingVertical: 15,
-          }}
-        >
-          <Image
-            source={require("./assets/images/image-1.jpg")}
-            style={{ width: "100%", height: 150, objectFit: "cover" }}
-            borderRadius={10}
-          />
-          <View
-            style={{
-              position: "relative",
-              top: -60,
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <Image
-              source={require("./assets/images/image-1.jpg")}
-              full
-              style={{
-                width: 80,
-                height: 80,
-                borderRadius: 100,
-                borderColor: "#fff",
-                borderWidth: 2,
-              }}
-            />
-            <Text style={{ fontSize: 18, fontWeight: "bold", marginTop: 10 }}>
-              John Doe
-            </Text>
-            <View style={{ flexDirection: "row", marginTop: 15 }}>
-              <TouchableOpacity
-                style={{
-                  width: 150,
-                  height: 44,
-                  borderRadius: 12,
-                  backgroundColor: Colors.bgPrimary,
-                  justifyContent: "center",
-                  alignItems: "center",
-                  paddingHorizontal: 10,
-                  paddingVertical: 6,
-                  flexDirection: "row",
-                }}
-                onPress={handleCreatePost}
-              >
-                <PhotoIcon />
-                <Text
-                  style={{
-                    marginLeft: 10,
-                    fontWeight: "700",
-                    color: Colors.textColor,
-                  }}
-                >
-                  Photo
-                </Text>
-              </TouchableOpacity>
-              <View style={{ width: 30 }} />
-              <TouchableOpacity
-                style={{
-                  width: 150,
-                  height: 44,
-                  borderRadius: 12,
-                  backgroundColor: Colors.bgPrimary,
-                  justifyContent: "center",
-                  alignItems: "center",
-                  paddingHorizontal: 10,
-                  paddingVertical: 6,
-                  flexDirection: "row",
-                }}
-                onPress={handleCreatePost}
-              >
-                <PlusIcon />
-                <Text
-                  style={{
-                    marginLeft: 10,
-                    fontWeight: "700",
-                    color: Colors.textColor,
-                  }}
-                >
-                  Story
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-          <View>
-            <Text style={stylesHomePage.headerText}>Create a post now</Text>
-            <TouchableOpacity
-              style={{
-                width: "100%",
-                height: 44,
-                borderRadius: 6,
-                backgroundColor: Colors.bgPrimary,
-                justifyContent: "center",
-                alignItems: "center",
-                paddingHorizontal: 10,
-                paddingVertical: 6,
-                flexDirection: "row",
-                marginTop: 10,
-              }}
-              onPress={handleCreatePost}
-            >
+            <View>
               <Text
                 style={{
-                  fontWeight: "700",
+                  fontSize: 13,
+                  marginLeft: 10,
+                  color: Colors.textColor,
                 }}
               >
-                Create a post now
+                Welcome back
               </Text>
+              <Text
+                style={{ fontSize: 18, marginLeft: 10, fontWeight: "bold" }}
+              >
+                John Doe
+              </Text>
+            </View>
+          </TouchableOpacity>
+          <View style={{ flexDirection: "row" }}>
+            <TouchableOpacity
+              style={stylesHomePage.icon}
+              onPress={handleGoNotifications}
+            >
+              <BellIcon width={30} height={30} />
+              {countNoti ? (
+                <View style={stylesHomePage.bage}>
+                  <Text style={stylesHomePage.bageText}>{countNoti}</Text>
+                </View>
+              ) : (
+                <Text></Text>
+              )}
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={stylesHomePage.icon}
+              onPress={onHandleExplore}
+            >
+              <MegaphoneIcon width={30} height={30} />
             </TouchableOpacity>
           </View>
-          <View style={{ position: "relative", marginTop: 20 }}>
-            <Text style={stylesHomePage.headerText}>Recent ads</Text>
-            <Image
-              source={require("./assets/images/sky-1.png")}
-              full
-              style={{
-                width: "100%",
-                height: 250,
-                objectFit: "cover",
-                marginTop: 10,
-              }}
-              borderRadius={10}
-            />
+        </View>
+        <View
+          style={{
+            paddingVertical: 25,
+            backgroundColor: "#F8F9FE",
+          }}
+        >
+          <View style={{ paddingHorizontal: 40 }}>
             <View
-              style={{
-                height: 80,
-                width: "100%",
-                position: "absolute",
-                bottom: 0,
-                left: 0,
-                opacity: 0.9,
-              }}
+              style={[
+                stylesHomePage.card,
+                stylesHomePage.shadowProp,
+                {
+                  padding: 20,
+                  height: 250,
+                  borderRadius: 24,
+                },
+              ]}
             >
-              <LinearGradient
-                colors={["transparent", "#0000000"]}
-                style={{ height: 80 }}
-              />
-            </View>
-            <View
-              style={{
-                position: "absolute",
-                bottom: 10,
-                justifyContent: "center",
-                alignItems: "center",
-                paddingHorizontal: 50,
-              }}
-            >
-              <TouchableOpacity onPress={handleCreatePost}>
-                <PlusIcon color={Colors.textColor} />
-              </TouchableOpacity>
-              <Text
-                style={{
-                  color: Colors.textWhite,
-                  fontSize: 17,
-                  fontWeight: "bold",
-                  marginTop: 10,
-                }}
-              >
-                Share your story
-              </Text>
-              <Text
-                style={{
-                  fontSize: 14,
-                  fontWeight: "400",
-                  marginTop: 10,
-                  textAlign: "center",
-                  color: Colors.textWhite,
-                }}
-              >
-                Your story will appear here. Sharing regularly helps you connect
-                iwth your audience
-              </Text>
-            </View>
-          </View>
-          <View style={{ padding: 10, marginTop: 20 }}>
-            <View>
-              <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <InformationCircleIcon />
-                <Text style={[stylesHomePage.headerText, { marginLeft: 5 }]}>
-                  Insights
-                </Text>
-              </View>
-              <View style={{ marginTop: 10 }}>
-                <Text style={{ marginTop: 5, fontSize: 16 }}>Lifetime</Text>
-              </View>
               <View
                 style={{
-                  marginTop: 5,
                   flexDirection: "row",
                   alignItems: "center",
-                }}
-              >
-                <Text style={{ fontSize: 16, fontWeight: "600" }}>501</Text>
-                <Text style={{ fontSize: 13, marginLeft: 10 }}>Followers</Text>
-              </View>
-              <TouchableOpacity
-                style={{
+                  justifyContent: "space-between",
                   width: "100%",
-                  height: 44,
-                  borderRadius: 6,
-                  backgroundColor: Colors.bgPrimary,
-                  justifyContent: "center",
-                  alignItems: "center",
-                  paddingHorizontal: 10,
-                  paddingVertical: 6,
-                  flexDirection: "row",
-                  marginTop: 10,
+                  paddingHorizontal: 30,
                 }}
-                onPress={() => navigation.navigate("AudienceScreen")}
               >
-                <ArrowLongIcon />
-                <Text
+                <View
                   style={{
-                    fontWeight: "700",
-                    marginLeft: 10,
+                    borderRadius: 18,
+                    borderColor: Colors.primaryColor,
+                    borderWidth: 2,
+                    padding: 5,
                   }}
                 >
-                  Your Audience
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          <View style={{ padding: 10, marginTop: 20 }}>
-            <View>
-              <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <InformationCircleIcon />
-                <Text style={[stylesHomePage.headerText, { marginLeft: 5 }]}>
-                  Trends
-                </Text>
+                  <Image
+                    source={require("./assets/images/image-1.jpg")}
+                    full
+                    style={{
+                      width: 60,
+                      height: 60,
+                      borderRadius: 14,
+                    }}
+                  />
+                </View>
+                <View style={{ marginLeft: 25 }}>
+                  <Text
+                    style={{
+                      fontSize: 13,
+                      color: Colors.textColor,
+                    }}
+                  >
+                    @johndoe
+                  </Text>
+                  <Text
+                    style={{ fontSize: 18, fontWeight: "bold", marginTop: 5 }}
+                  >
+                    John Doe
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: 15,
+                      fontWeight: "500",
+                      color: Colors.primaryColor,
+                      marginTop: 5,
+                    }}
+                  >
+                    Developer
+                  </Text>
+                </View>
               </View>
-              <View style={{ flexDirection: "row", marginTop: 10 }}>
-                <Text>Sep 15</Text>
-                <Text> - Nov 9, 2023</Text>
+              <View style={{ paddingHorizontal: 30, marginTop: 20 }}>
+                <Text style={{ fontSize: 18, fontWeight: "bold" }}>
+                  About me
+                </Text>
+                <Text style={{ color: Colors.textColor, marginTop: 10 }}>
+                  Madison blackstone is a director of user experience manaing
+                  global teams.
+                </Text>
               </View>
               <View
                 style={{
                   flexDirection: "row",
                   alignItems: "center",
-                  marginTop: 10,
+                  height: 60,
+                  position: "relative",
+                  bottom: -20,
                 }}
               >
-                <Text style={{ fontSize: 17, fontWeight: "bold" }}>99</Text>
+                <View
+                  style={{
+                    position: "relative",
+                    right: -25,
+                    height: "100%",
+                    width: 80,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    backgroundColor: Colors.bgPrimaryDark,
+                    borderRadius: 16,
+                    zIndex: 9,
+                  }}
+                >
+                  <Text
+                    style={{
+                      color: Colors.textWhite,
+                      fontSize: 22,
+                      fontWeight: "bold",
+                    }}
+                  >
+                    52
+                  </Text>
+                  <Text style={{ fontSize: 12, color: Colors.textWhite }}>
+                    Post
+                  </Text>
+                </View>
+                <View
+                  style={{
+                    height: "100%",
+                    width: 120,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    backgroundColor: Colors.primaryColor,
+                    borderRadius: 16,
+                  }}
+                >
+                  <Text
+                    style={{
+                      color: Colors.textWhite,
+                      fontSize: 22,
+                      fontWeight: "bold",
+                    }}
+                  >
+                    512
+                  </Text>
+                  <Text style={{ fontSize: 12, color: Colors.textWhite }}>
+                    Following
+                  </Text>
+                </View>
+                <View
+                  style={{
+                    position: "relative",
+                    left: -25,
+                    height: "100%",
+                    width: 80,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    backgroundColor: Colors.primaryColor,
+                    borderRadius: 16,
+                  }}
+                >
+                  <Text
+                    style={{
+                      color: Colors.textWhite,
+                      fontSize: 22,
+                      fontWeight: "bold",
+                    }}
+                  >
+                    5.2K
+                  </Text>
+                  <Text style={{ fontSize: 12, color: Colors.textWhite }}>
+                    Followers
+                  </Text>
+                </View>
+              </View>
+            </View>
+          </View>
+          <View
+            style={{
+              borderRadius: 24,
+              backgroundColor: "#ffffff",
+              marginTop: 50,
+              paddingVertical: 20,
+              paddingHorizontal: 20,
+              paddingBottom: 40,
+              shadowOffset: { width: 0, height: 2 },
+              shadowColor: "#808080",
+              shadowOpacity: 0.2,
+              shadowRadius: 12,
+            }}
+          >
+            <View
+              style={{ flexDirection: "row", justifyContent: "space-between" }}
+            >
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                }}
+              >
+                <ClockIcon />
+                <Text style={stylesHomePage.headerText}> Recent posts</Text>
+              </View>
+              <View style={{ flexDirection: "row" }}>
+                <TouchableOpacity onPress={handleCreatePost}>
+                  <PhotoIcon />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={handleCreatePost}
+                  style={{ marginLeft: 15 }}
+                >
+                  <PlusOutlineIcon />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={handleContent}
+                  style={{ marginLeft: 15 }}
+                >
+                  <ChevronRightIcon />
+                </TouchableOpacity>
+              </View>
+            </View>
+            <View>
+              <ListPosts posts={posts} loading={loading} />
+            </View>
+            <View
+              style={[
+                stylesHomePage.shadowProp,
+                { position: "relative", marginTop: 20, alignItems: "center" },
+              ]}
+            >
+              <Image
+                source={require("./assets/images/sky-1.png")}
+                full
+                style={{
+                  width: "100%",
+                  height: 250,
+                  objectFit: "cover",
+                  marginTop: 10,
+                }}
+                borderRadius={10}
+              />
+              <View
+                style={{
+                  height: 80,
+                  width: "100%",
+                  position: "absolute",
+                  bottom: 0,
+                  left: 0,
+                  opacity: 0.9,
+                }}
+              >
+                <LinearGradient
+                  colors={["transparent", "#0000000"]}
+                  style={{ height: 80 }}
+                />
+              </View>
+              <View
+                style={{
+                  position: "absolute",
+                  bottom: 10,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  paddingHorizontal: 50,
+                }}
+              >
+                <TouchableOpacity onPress={handleCreatePost}>
+                  <PlusIcon color={Colors.bgPrimaryDark} />
+                </TouchableOpacity>
+                <Text
+                  style={{
+                    color: Colors.textWhite,
+                    fontSize: 17,
+                    fontWeight: "bold",
+                    marginTop: 10,
+                  }}
+                >
+                  Share your story
+                </Text>
+                <Text
+                  style={{
+                    fontSize: 14,
+                    fontWeight: "400",
+                    marginTop: 10,
+                    textAlign: "center",
+                    color: Colors.textWhite,
+                  }}
+                >
+                  Your story will appear here. Sharing regularly helps you
+                  connect iwth your audience
+                </Text>
+              </View>
+            </View>
+            <View
+              style={[
+                stylesHomePage.card,
+                stylesHomePage.shadowProp,
+                { padding: 10, marginTop: 20 },
+              ]}
+            >
+              <View>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <InformationCircleIcon />
+                  <Text style={[stylesHomePage.headerText, { marginLeft: 5 }]}>
+                    Insights
+                  </Text>
+                </View>
+                <View style={{ marginTop: 10 }}>
+                  <Text style={{ marginTop: 5, fontSize: 16 }}>Lifetime</Text>
+                </View>
+                <View
+                  style={{
+                    marginTop: 5,
+                    flexDirection: "row",
+                    alignItems: "center",
+                  }}
+                >
+                  <Text style={{ fontSize: 16, fontWeight: "600" }}>501</Text>
+                  <Text style={{ fontSize: 13, marginLeft: 10 }}>
+                    Followers
+                  </Text>
+                </View>
+                <TouchableOpacity
+                  style={{
+                    width: "100%",
+                    height: 44,
+                    borderRadius: 6,
+                    backgroundColor: Colors.primaryColor,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    paddingHorizontal: 10,
+                    paddingVertical: 6,
+                    flexDirection: "row",
+                    marginTop: 10,
+                  }}
+                  onPress={() => navigation.navigate("AudienceScreen")}
+                >
+                  <ArrowLongIcon color={Colors.textWhite} />
+                  <Text
+                    style={{
+                      fontWeight: "700",
+                      marginLeft: 10,
+                      color: Colors.textWhite,
+                    }}
+                  >
+                    Your Audience
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+            <View
+              style={[
+                stylesHomePage.card,
+                stylesHomePage.shadowProp,
+                { padding: 10, marginTop: 20 },
+              ]}
+            >
+              <View>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <InformationCircleIcon />
+                  <Text style={[stylesHomePage.headerText, { marginLeft: 5 }]}>
+                    Trends
+                  </Text>
+                </View>
+                <View style={{ flexDirection: "row", marginTop: 10 }}>
+                  <Text>Sep 15</Text>
+                  <Text> - Nov 9, 2023</Text>
+                </View>
                 <View
                   style={{
                     flexDirection: "row",
                     alignItems: "center",
-                    marginHorizontal: 10,
+                    marginTop: 10,
                   }}
                 >
-                  <ArrowUpIcon
-                    color={Colors.successColor}
-                    width={15}
-                    height={15}
-                  />
-                  <Text style={{ color: Colors.successColor, fontSize: 12 }}>
-                    100%
-                  </Text>
+                  <Text style={{ fontSize: 17, fontWeight: "bold" }}>99</Text>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      marginHorizontal: 10,
+                    }}
+                  >
+                    <ArrowUpIcon
+                      color={Colors.primaryColor}
+                      width={15}
+                      height={15}
+                    />
+                    <Text style={{ color: Colors.primaryColor, fontSize: 12 }}>
+                      100%
+                    </Text>
+                  </View>
+                  <Text style={{ fontSize: 13 }}>Followers</Text>
                 </View>
-                <Text style={{ fontSize: 13 }}>Followers</Text>
-              </View>
-              <TouchableOpacity
-                style={{
-                  width: "100%",
-                  height: 44,
-                  borderRadius: 6,
-                  backgroundColor: Colors.bgPrimary,
-                  justifyContent: "center",
-                  alignItems: "center",
-                  paddingHorizontal: 10,
-                  paddingVertical: 6,
-                  flexDirection: "row",
-                  marginTop: 10,
-                }}
-                onPress={() => navigation.navigate("OverviewScreen")}
-              >
-                <Text
+                <TouchableOpacity
                   style={{
-                    fontWeight: "700",
+                    width: "100%",
+                    height: 44,
+                    borderRadius: 6,
+                    backgroundColor: Colors.primaryColor,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    paddingHorizontal: 10,
+                    paddingVertical: 6,
+                    flexDirection: "row",
+                    marginTop: 10,
                   }}
+                  onPress={() => navigation.navigate("OverviewScreen")}
                 >
-                  Overview
-                </Text>
-              </TouchableOpacity>
+                  <CalendarIcon color={Colors.textWhite} />
+                  <Text
+                    style={{
+                      fontWeight: "700",
+                      color: Colors.textWhite,
+                      marginLeft: 15,
+                    }}
+                  >
+                    Overview
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
         </View>
-        <View style={{ height: 50 }}></View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -1418,7 +2241,7 @@ const style = StyleSheet.create({});
 const stylesHomePage = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#ffffff",
     overflow: "scroll",
   },
   header: {
@@ -1426,7 +2249,7 @@ const stylesHomePage = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 20,
+    paddingHorizontal: 10,
   },
   icon: {
     padding: 10,
@@ -1457,6 +2280,33 @@ const stylesHomePage = StyleSheet.create({
     color: "#000",
     fontSize: 18,
     textAlign: "center",
+  },
+  bage: {
+    position: "absolute",
+    top: 13,
+    right: 13,
+    width: 10,
+    height: 10,
+    borderRadius: 100,
+    backgroundColor: "#ff0000",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  bageText: {
+    color: Colors.dangerColor,
+    fontSize: 12,
+    fontWeight: "bold",
+  },
+  card: {
+    backgroundColor: "white",
+    borderRadius: 8,
+    width: "100%",
+  },
+  shadowProp: {
+    shadowOffset: { width: 0, height: 2 },
+    shadowColor: "#808080",
+    shadowOpacity: 0.2,
+    shadowRadius: 12,
   },
 });
 
@@ -1812,7 +2662,9 @@ function OverviewScreen({ navigation }) {
   );
 }
 function ContentScreen({ navigation }) {
-  const [active, setActive] = React.useState(1);
+  const [posts, setPosts] = React.useState([]);
+  const [active, setActive] = React.useState(2);
+  const [loading, setLoading] = React.useState(false);
 
   const onActive = function (state) {
     setActive(state);
@@ -1820,6 +2672,54 @@ function ContentScreen({ navigation }) {
 
   const CreateContent = () => {
     navigation.navigate("CreatePost");
+  };
+
+  React.useEffect(() => {
+    const initData = async () => {
+      setLoading(true);
+      await firebase
+        .firestore()
+        .collection(active === 1 ? "posts" : "planners")
+        .orderBy(active === 1 ? "createdAt" : "date", "desc")
+        .limit(10)
+        .get()
+        .then((querySnapshot) => {
+          console.log(querySnapshot.docs);
+          const data = [];
+          querySnapshot.forEach((doc) => {
+            data.push({ ...doc.data(), docId: doc.id });
+          });
+
+          setPosts(data);
+          setLoading(false);
+        });
+    };
+    initData();
+  }, [active]);
+
+  const stylesActive = {
+    width: "46%",
+    height: 44,
+    borderRadius: 6,
+    backgroundColor: Colors.primaryColor,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    flexDirection: "row",
+    marginTop: 10,
+  };
+
+  const styleDeAtive = {
+    width: "46%",
+    height: 44,
+    borderRadius: 6,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    flexDirection: "row",
+    marginTop: 10,
   };
 
   return (
@@ -1866,175 +2766,200 @@ function ContentScreen({ navigation }) {
           }}
         >
           <TouchableOpacity
-            style={{
-              width: "46%",
-              height: 44,
-              borderRadius: 6,
-              backgroundColor: Colors.bgSecondary,
-              justifyContent: "center",
-              alignItems: "center",
-              paddingHorizontal: 10,
-              paddingVertical: 6,
-              flexDirection: "row",
-              marginTop: 10,
-            }}
+            style={active === 1 ? stylesActive : styleDeAtive}
             onPress={() => onActive(1)}
           >
             <Text
-              style={{
-                fontWeight: "700",
-                color: Colors.textWhite,
-              }}
+              style={
+                active === 1
+                  ? {
+                      fontWeight: "700",
+                      color: Colors.textWhite,
+                    }
+                  : {
+                      fontWeight: "500",
+                      color: Colors.textColor,
+                    }
+              }
             >
               Mentions & Tags
             </Text>
           </TouchableOpacity>
           <View style={{ width: "8%" }} />
           <TouchableOpacity
-            style={{
-              width: "46%",
-              height: 44,
-              borderRadius: 6,
-              justifyContent: "center",
-              alignItems: "center",
-              paddingHorizontal: 10,
-              paddingVertical: 6,
-              flexDirection: "row",
-              marginTop: 10,
-            }}
+            style={active === 2 ? stylesActive : styleDeAtive}
             onPress={() => onActive(2)}
           >
             <Text
-              style={{
-                fontWeight: "500",
-                color: Colors.textColor,
-              }}
+              style={
+                active === 2
+                  ? {
+                      fontWeight: "700",
+                      color: Colors.textWhite,
+                    }
+                  : {
+                      fontWeight: "500",
+                      color: Colors.textColor,
+                    }
+              }
             >
               Planners
             </Text>
           </TouchableOpacity>
         </View>
-        <View
-          style={{
-            justifyContent: "center",
-            alignItems: "center",
-            padding: 50,
-          }}
-        >
-          <Image
-            source={require("./assets/images/empty.png")}
-            style={{ width: 260, height: 200, objectFit: "cover" }}
-          />
-          <Text style={{ fontWeight: "bold", marginTop: 10, fontSize: 17 }}>
-            No post to show
-          </Text>
-          <Text
-            style={{
-              marginTop: 10,
-              fontSize: 14,
-              textAlign: "center",
-            }}
-          >
-            Posts mentioning or tagging your company will appear here.
-          </Text>
-        </View>
       </View>
-      <View height={100}></View>
+      <View
+        style={{
+          flex: 1,
+          flexGrow: 2,
+          height: "100%",
+        }}
+      >
+        {active === 1 ? (
+          <ListPosts
+            posts={posts}
+            loading={loading}
+            styles={{ paddingHorizontal: 10, paddingBottom: 40 }}
+          />
+        ) : (
+          <Planners
+            data={posts}
+            loading={loading}
+            styles={{ paddingHorizontal: 10, paddingBottom: 40 }}
+          />
+        )}
+      </View>
+      <View height={40}></View>
     </SafeAreaView>
   );
 }
 
-function InboxScreen() {
-  const [active, setActive] = React.useState(1);
+function EmptyScreen() {
+  return <View />;
+}
 
+function InboxScreen({ navigation }) {
+  const [posts, setPosts] = React.useState([]);
+  const [active, setActive] = React.useState(2);
+  const [loading, setLoading] = React.useState(false);
   const onActive = function (state) {
     setActive(state);
   };
 
+  const CreateContent = () => {
+    navigation.navigate("CreatePost");
+  };
+
+  React.useEffect(() => {
+    const initData = async () => {
+      setLoading(true);
+      await firebase
+        .firestore()
+        .collection(active === 1 ? "messages" : "comments")
+        .orderBy("timestamp", "desc")
+        .limit(10)
+        .get()
+        .then((querySnapshot) => {
+          console.log(querySnapshot.docs);
+          const data = [];
+          querySnapshot.forEach((doc) => {
+            data.push({ ...doc.data(), docId: doc.id });
+          });
+
+          setPosts(data);
+          setLoading(false);
+        });
+    };
+    initData();
+  }, [active]);
+
+  const stylesActive = {
+    width: 100,
+    height: 35,
+    borderRadius: 24,
+    borderWidth: 2,
+    borderColor: Colors.primaryColor,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    flexDirection: "row",
+    marginTop: 10,
+  };
+
+  const styleDeAtive = {
+    width: 100,
+    height: 35,
+    borderRadius: 6,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    flexDirection: "row",
+    marginTop: 10,
+  };
+
   return (
     <SafeAreaView style={stylesHomePage.container}>
-      <View style={{ padding: 20 }}>
+      <View style={{ padding: 20, flex: 1 }}>
         <View>
           <Text style={{ fontSize: 17, fontWeight: "bold" }}>Home</Text>
         </View>
         <View style={{ flexDirection: "row", marginTop: 10 }}>
           <TouchableOpacity
-            style={{
-              height: 30,
-              borderRadius: 24,
-              justifyContent: "center",
-              alignItems: "center",
-              paddingHorizontal: 10,
-              paddingVertical: 6,
-              flexDirection: "row",
-              marginTop: 10,
-            }}
+            style={active === 1 ? stylesActive : styleDeAtive}
             onPress={() => onActive(1)}
           >
             <Text
-              style={{
-                fontWeight: "700",
-                color: Colors.textColor,
-              }}
+              style={
+                active === 1
+                  ? {
+                      fontWeight: "700",
+                      color: Colors.primaryColor,
+                    }
+                  : {
+                      fontWeight: "500",
+                      color: Colors.textColor,
+                    }
+              }
             >
-              Message
+              Messages
             </Text>
           </TouchableOpacity>
+          <View style={{ width: "8%" }} />
           <TouchableOpacity
-            style={{
-              height: 30,
-              borderRadius: 24,
-              justifyContent: "center",
-              alignItems: "center",
-              paddingHorizontal: 10,
-              paddingVertical: 6,
-              flexDirection: "row",
-              marginTop: 10,
-              borderWidth: 1,
-              borderColor: Colors.primaryColor,
-              marginLeft: 10,
-            }}
+            style={active === 2 ? stylesActive : styleDeAtive}
             onPress={() => onActive(2)}
           >
             <Text
-              style={{
-                fontWeight: "500",
-                color: Colors.primaryColor,
-              }}
+              style={
+                active === 2
+                  ? {
+                      fontWeight: "700",
+                      color: Colors.primaryColor,
+                    }
+                  : {
+                      fontWeight: "500",
+                      color: Colors.textColor,
+                    }
+              }
             >
               Comments
             </Text>
           </TouchableOpacity>
         </View>
         <View style={{ marginTop: 10 }}>
-          <Text style={{ fontSize: 16, fontWeight: "600" }}>All messages</Text>
-        </View>
-        <View
-          style={{
-            justifyContent: "center",
-            alignItems: "center",
-            padding: 50,
-          }}
-        >
-          <Image
-            source={require("./assets/images/empty.png")}
-            style={{ width: 260, height: 200, objectFit: "cover" }}
-          />
-          <Text style={{ fontWeight: "bold", marginTop: 10, fontSize: 17 }}>
-            There no comments
-          </Text>
-          <Text
-            style={{
-              marginTop: 10,
-              fontSize: 14,
-              textAlign: "center",
-            }}
-          >
-            Comments on your posts will displayed here
+          <Text style={{ fontSize: 16, fontWeight: "600" }}>
+            All {active === 1 ? "messages" : "comments"}
           </Text>
         </View>
+        {active === 1 ? (
+          <Messages data={posts} loading={loading} styles={{ paddingHorizontal: 10}} />
+        ) : (
+          <Comments data={posts} loading={loading} styles={{ paddingHorizontal: 10 }} />
+        )}
       </View>
-      <View height={100}></View>
+      <View height={40}></View>
     </SafeAreaView>
   );
 }
@@ -2115,6 +3040,7 @@ function NotificationsScreen({ navigation }) {
       await firebase
         .firestore()
         .collection("notifications")
+        .orderBy("timestamp", "desc")
         .onSnapshot((querySnapshot) => {
           const data = [];
           querySnapshot.forEach((doc) => {
@@ -2123,6 +3049,13 @@ function NotificationsScreen({ navigation }) {
           setNotifications(data);
         });
     };
+
+    // data.forEach(async (item) => {
+    //   await firebase
+    //   .firestore()
+    //   .collection("comments")
+    //   .add(item)
+    // })
 
     initData();
   }, []);
@@ -2144,7 +3077,7 @@ function NotificationsScreen({ navigation }) {
       .doc(docId)
       .update({ readed: true });
 
-    alert("Upadated Successful");
+    Alert.alert("Notification", "Update Readed");
   };
 
   return (
@@ -2154,54 +3087,64 @@ function NotificationsScreen({ navigation }) {
         titleLeft="Notifications"
         navigation={navigation}
       />
-      <View flex>
-        <View marginT-20 style={{ gap: 20 }}>
-          {notifications.map((data) => (
-            <TouchableOpacity
-              onPress={() => handleRead(data.docId)}
-              key={data.name}
-              style={{
+      <ScrollView style={{ marginTop: 10, paddingHorizontal: 20 }}>
+        {notifications.map((data) => (
+          <TouchableOpacity
+            onPress={() => handleRead(data.docId)}
+            key={data.name}
+            style={[
+              stylesHomePage.card,
+              stylesHomePage.shadowProp,
+              {
+                marginTop: 10,
                 borderBottomWidth: 1,
                 borderColor: Colors.bgSecondaryLight,
                 flexDirection: "row",
                 paddingHorizontal: 10,
                 paddingVertical: 10,
                 alignItems: "center",
-              }}
-            >
-              <TouchableOpacity>
-                <CheckedIcon
-                  style={{ marginRight: 10 }}
-                  color={data?.readed ? Colors.successColor : Colors.textColor}
-                />
-              </TouchableOpacity>
-              <View style={{ position: "relative", flexGrow: 2 }}>
-                <Text style={{ fontWeight: data?.readed ? "700" : "400" }}>
-                  {data.name}
-                </Text>
-                <Text style={{ marginTop: 5 }}>{data.text}</Text>
-                <TouchableOpacity
-                  style={{ position: "absolute", right: 0, top: 0 }}
+              },
+            ]}
+          >
+            <View style={{ position: "relative", flexGrow: 2 }}>
+              <Text style={{ fontWeight: data?.readed ? "400" : "700" }}>
+                {data.name}
+              </Text>
+              <Text
+                style={{
+                  marginTop: 5,
+                  fontWeight: data?.readed ? "300" : "400",
+                }}
+              >
+                {data.text}
+              </Text>
+              {data.readed ? null : (
+                <View
+                  style={[
+                    stylesHomePage.bage,
+                    {
+                      top: 0,
+                      right: 0,
+                    },
+                  ]}
                   onPress={() => handleRemoveNoti(data.docId)}
-                >
-                  <TimesIcon color={Colors.textColor} width={17} />
-                </TouchableOpacity>
-                <Text
-                  style={{
-                    position: "absolute",
-                    right: 0,
-                    bottom: -5,
-                    color: Colors.bgSecondaryLight,
-                  }}
-                >
-                  {data.time || "an hour ago"}
-                </Text>
-              </View>
-            </TouchableOpacity>
-          ))}
-        </View>
-      </View>
-      <View height={100}></View>
+                />
+              )}
+              <Text
+                style={{
+                  position: "absolute",
+                  right: 0,
+                  bottom: -5,
+                  color: Colors.bgSecondaryLight,
+                }}
+              >
+                {data.time || "an hour ago"}
+              </Text>
+              <View style={{ height: 14 }}></View>
+            </View>
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -2355,6 +3298,7 @@ const stylesCamera = StyleSheet.create({
 
 const CreatePost = ({ navigation }) => {
   const [loading, setLoading] = React.useState(false);
+  const [text, setText] = React.useState("");
   const [imageList, setImageList] = React.useState([]);
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -2386,9 +3330,86 @@ const CreatePost = ({ navigation }) => {
     setImageList([...imageList, newUri]);
   };
 
+  const onChangeText = (txt) => {
+    setText(txt);
+  };
+
+  const [showToast, setShowToast] = useState(false);
+
+  const showToastMessage = () => {
+    showToast(setShowToast);
+  };
+
+  const renderToast = () => {
+    if (showToast) {
+      return (
+        <View
+          style={{
+            position: "absolute",
+            bottom: 20,
+            left: "50%",
+            transform: [{ translateX: -50 }],
+            backgroundColor: "green",
+            padding: 10,
+            borderRadius: 5,
+          }}
+        >
+          <Text style={{ color: "white" }}>Success!</Text>
+        </View>
+      );
+    }
+    return null;
+  };
+
+  const handleCreatePost = async () => {
+    await firebase
+      .firestore()
+      .collection("posts")
+      .add({
+        name: "John Doe",
+        text: text,
+        liked: 0,
+        comments: 0,
+        shared: 0,
+        booked: 0,
+        createdAt: new Date().getTime(),
+      })
+      .then((result) => {
+        Alert.alert("Notification", "Created post successfully", [
+          {
+            text: "New",
+            onPress: () => {
+              setImageList([]);
+              setText("");
+            },
+            style: "cancel",
+          },
+          {
+            text: "Home",
+            onPress: () => {
+              setImageList([]);
+              setText("");
+              goToHome();
+            },
+            style: "default",
+          },
+        ]);
+      });
+  };
+
   return (
     <SafeAreaView style={stylesHomePage.container}>
-      <CustomHeader showBack titleLeft="New Post" navigation={navigation} />
+      <CustomHeader
+        showBack
+        titleLeft="Create Post"
+        navigation={navigation}
+        right={
+          <PaperAirplaneIcon
+            onPress={handleCreatePost}
+            color={Colors.primaryColor}
+          />
+        }
+      />
       <CameraModal
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
@@ -2399,8 +3420,11 @@ const CreatePost = ({ navigation }) => {
           style={{
             alignItems: "center",
             flexDirection: "row",
-            backgroundColor: "#e6e6e6",
+            borderColor: Colors.bgSecondaryLight,
+            borderWidth: 1,
             padding: 10,
+            marginHorizontal: 20,
+            borderRadius: 24,
           }}
         >
           <Image
@@ -2414,8 +3438,59 @@ const CreatePost = ({ navigation }) => {
               borderWidth: 2,
             }}
           />
-          <View style={{ marginLeft: 15 }}>
-            <Text style={{ fontSize: 17, fontWeight: "bold" }}>John Done</Text>
+          <View style={{ marginLeft: 5, flex: 1 }}>
+            <Text style={{ fontSize: 17, fontWeight: "600" }}>John Done</Text>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                marginTop: 5,
+              }}
+            >
+              <View
+                style={{
+                  backgroundColor: Colors.primaryColor,
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: 70,
+                  borderRadius: 24,
+                }}
+              >
+                <PublicIcon width={18} color={Colors.textWhite} />
+                <Text
+                  style={{
+                    color: Colors.textWhite,
+                    marginLeft: 5,
+                    fontSize: 12,
+                  }}
+                >
+                  Public
+                </Text>
+              </View>
+              <View
+                style={{
+                  backgroundColor: Colors.primaryColor,
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: 70,
+                  borderRadius: 24,
+                  marginLeft: 10,
+                }}
+              >
+                <PlusOutlineIcon width={18} color={Colors.textWhite} />
+                <Text
+                  style={{
+                    color: Colors.textWhite,
+                    marginLeft: 2,
+                    fontSize: 12,
+                  }}
+                >
+                  Album
+                </Text>
+              </View>
+            </View>
           </View>
         </View>
         <View style={{ marginTop: 10 }}>
@@ -2424,6 +3499,8 @@ const CreatePost = ({ navigation }) => {
             accessible={false}
           >
             <TextInput
+              value={text}
+              onChangeText={(text) => onChangeText(text)}
               returnKeyType="done"
               rows={4}
               multiline={true}
@@ -2459,18 +3536,24 @@ const CreatePost = ({ navigation }) => {
           <TouchableOpacity style={stylesNewPost} onPress={pickImage}>
             <PhotoIcon color={Colors.successColor} />
             <View style={{ height: 5 }} />
-            <Text style={{ marginTop: 10 }}>Photo/Video</Text>
+            <Text style={{ marginTop: 10, color: Colors.textColor }}>
+              Photo/Video
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity style={stylesNewPost}>
             <MapPinIcon color={Colors.dangerColor} />
-            <Text style={{ marginTop: 10 }}>Location</Text>
+            <Text style={{ marginTop: 10, color: Colors.textColor }}>
+              Location
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={stylesNewPost}
             onPress={() => setModalVisible(true)}
           >
             <VideoCameraIcon color={Colors.dangerColor} />
-            <Text style={{ marginTop: 10 }}>Live video</Text>
+            <Text style={{ marginTop: 10, color: Colors.textColor }}>
+              Live video
+            </Text>
           </TouchableOpacity>
         </View>
         <View
@@ -2482,7 +3565,9 @@ const CreatePost = ({ navigation }) => {
         >
           <TouchableOpacity center style={stylesNewPost}>
             <FaceSmileIcon color={Colors.warnColor} />
-            <Text style={{ marginTop: 10 }}>Emotions</Text>
+            <Text style={{ marginTop: 10, color: Colors.textColor }}>
+              Emotions
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity
             center
@@ -2490,11 +3575,15 @@ const CreatePost = ({ navigation }) => {
             onPress={() => setModalVisible(true)}
           >
             <CameraIcon color="#6600cc" />
-            <Text style={{ marginTop: 10 }}>Camera</Text>
+            <Text style={{ marginTop: 10, color: Colors.textColor }}>
+              Camera
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity center style={stylesNewPost}>
             <ChatBubbleLeftEllipsisIcon color={Colors.primaryColor} />
-            <Text style={{ marginTop: 10 }}>Get messages</Text>
+            <Text style={{ marginTop: 10, color: Colors.textColor }}>
+              Get messages
+            </Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -2517,16 +3606,18 @@ const CreatePost = ({ navigation }) => {
             flexDirection: "row",
             marginTop: 10,
           }}
-          onPress={goToHome}
+          onPress={handleCreatePost}
         >
           <Text
             style={{
               fontWeight: "700",
               color: Colors.textWhite,
+              marginRight: 10,
             }}
           >
-            Next
+            Post
           </Text>
+          <PaperAirplaneIcon color={Colors.textWhite} />
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -2535,11 +3626,15 @@ const CreatePost = ({ navigation }) => {
 
 const stylesNewPost = StyleSheet.create({
   borderRadius: 10,
-  backgroundColor: "#f2f2f2",
+  backgroundColor: "#f2f2f2de",
   padding: 15,
   width: "30%",
   justifyContent: "ceneter",
   alignItems: "center",
+  shadowOffset: { width: 0, height: 2 },
+  shadowColor: "#cccccc",
+  shadowOpacity: 0.3,
+  shadowRadius: 12,
 });
 
 function SettingsScreen({ navigation }) {
@@ -2593,7 +3688,7 @@ function SettingsScreen({ navigation }) {
               flexDirection: "row",
               backgroundColor: "#f2f2f2",
             }}
-            onPress={() => onActive(2)}
+            onPress={() => navigation.navigate("HomeScreen")}
           >
             <MagnifyingGlassIcon color={Colors.textColor} />
           </TouchableOpacity>
@@ -2603,7 +3698,7 @@ function SettingsScreen({ navigation }) {
             marginTop: 20,
             alignItems: "center",
             flexDirection: "row",
-            backgroundColor: "#e6e6e6",
+            backgroundColor: Colors.primaryColor,
             borderRadius: 12,
             padding: 15,
           }}
@@ -2628,10 +3723,10 @@ function SettingsScreen({ navigation }) {
             }}
           >
             <View style={{ marginLeft: 10 }}>
-              <Text style={{ fontSize: 17, fontWeight: "bold" }}>
+              <Text style={{ fontSize: 17, fontWeight: "bold", color: Colors.textWhite }}>
                 John Done
               </Text>
-              <Text style={{ marginTop: 5, fontSize: 12 }}>
+              <Text style={{ marginTop: 5, fontSize: 12, color: Colors.textWhite }}>
                 Software Engineer
               </Text>
             </View>
@@ -2684,7 +3779,7 @@ function SettingsScreen({ navigation }) {
               backgroundColor: "#f6f7f8",
               marginTop: 10,
             }}
-            onPress={handleGoNotifications}
+            onPress={() => navigation.navigate("ContentScreen")}
           >
             <View
               style={{
@@ -2695,7 +3790,7 @@ function SettingsScreen({ navigation }) {
                 alignItems: "center",
               }}
             >
-              <Text color={Colors.textColor}>Supports</Text>
+              <Text color={Colors.textColor}>Mentions & Tag - Planners</Text>
               <ChevronRightIcon color="#cccccc" />
             </View>
           </TouchableOpacity>
@@ -2712,7 +3807,7 @@ function SettingsScreen({ navigation }) {
               backgroundColor: "#f6f7f8",
               marginTop: 10,
             }}
-            onPress={handleGoNotifications}
+            onPress={() => navigation.navigate("InboxScreen")}
           >
             <View
               style={{
@@ -2723,7 +3818,7 @@ function SettingsScreen({ navigation }) {
                 alignItems: "center",
               }}
             >
-              <Text color={Colors.textColor}>Settings</Text>
+              <Text color={Colors.textColor}>Messages - Comments</Text>
               <ChevronRightIcon color="#cccccc" />
             </View>
           </TouchableOpacity>
@@ -2740,7 +3835,7 @@ function SettingsScreen({ navigation }) {
               backgroundColor: "#f6f7f8",
               marginTop: 10,
             }}
-            onPress={handleGoNotifications}
+            onPress={() => navigation.navigate("HOmeScreen")}
           >
             <View
               style={{
@@ -2751,12 +3846,12 @@ function SettingsScreen({ navigation }) {
                 alignItems: "center",
               }}
             >
-              <Text color={Colors.textColor}>Contacts</Text>
+              <Text color={Colors.textColor}>Home</Text>
               <ChevronRightIcon color="#cccccc" />
             </View>
           </TouchableOpacity>
         </View>
-        <View style={{ marginTop: 20 }}>
+        {/* <View style={{ marginTop: 20 }}>
           <View style={stylesProfile.switchContainer}>
             <Text style={{ fontWeight: "600" }}>Dark Mode</Text>
             <Switch
@@ -2783,7 +3878,7 @@ function SettingsScreen({ navigation }) {
               onValueChange={() => setEnableNotifications(!enableNotifications)}
             />
           </View>
-        </View>
+        </View> */}
       </View>
     </SafeAreaView>
   );
@@ -2798,6 +3893,47 @@ const stylesProfile = StyleSheet.create({
 });
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
+const TabBarPlusButton = ({ navigation }) => {
+  const onPress = () => {
+    navigation.navigate("CreatePost");
+  };
+
+  return (
+    <>
+      <View
+        style={{
+          justifyContent: "center",
+          alignItems: "center",
+          position: "relative",
+          top: -20,
+        }}
+      >
+        <View
+          style={{
+            width: 60,
+            height: 60,
+            borderRadius: 999,
+            backgroundColor: Colors.textWhite,
+          }}
+        />
+        <TouchableOpacity
+          onPress={onPress}
+          style={{
+            justifyContent: "center",
+            alignItems: "center",
+            width: 50,
+            height: 50,
+            backgroundColor: Colors.primaryColor,
+            borderRadius: 999,
+            position: "absolute",
+          }}
+        >
+          <PlusOutlineIcon size={28} color={Colors.textWhite} />
+        </TouchableOpacity>
+      </View>
+    </>
+  );
+};
 
 function TabScreen() {
   return (
@@ -2884,6 +4020,15 @@ function TabScreen() {
         }}
         name="ContentScreen"
         component={ContentScreen}
+      />
+      <Tab.Screen
+        options={({ navigation }) => ({
+          tabBarButton: (props) => (
+            <TabBarPlusButton {...props} navigation={navigation} />
+          ),
+        })}
+        name="Empty"
+        component={EmptyScreen}
       />
       <Tab.Screen
         options={{
