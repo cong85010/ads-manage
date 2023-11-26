@@ -1,8 +1,13 @@
 {
   "expo": {
-    "name": "tikporn",
+    "name": "Ads Meta",
     "slug": "ads-mana",
     "version": "1.0.0",
+    "splash": {
+      "image": "./assets/images/loading.gif",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
     "assetBundlePatterns": [
       "**/*"
     ],
@@ -33,5 +38,5 @@
       ]
     ]
   },
-  "name": "tikporn"
+  "name": "Ads Meta"
 }
