@@ -1,47 +1,58 @@
-import React, { useRef, useEffect, useState } from "react";
-import {
-  AsyncStorage,
-  SafeAreaView,
-  View,
-  Text,
-  LogBox,
-  Image,
-  Modal,
-  TouchableOpacity,
-  StyleSheet,
-  Dimensions,
-  ActivityIndicator,
-  ScrollView,
-  Button,
-  StatusBar,
-  Switch,
-  TouchableWithoutFeedback,
-  Keyboard,
-  TextInput,
-} from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { WebView } from "react-native-webview";
-import { NavigationContainer, useNavigation } from "@react-navigation/native";
+import { NavigationContainer, useFocusEffect, useRoute } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { LinearGradient } from "expo-linear-gradient";
 import Checkbox from "expo-checkbox";
+import { LinearGradient } from "expo-linear-gradient";
 import firebase from "firebase";
-import { Path, Svg } from "react-native-svg";
-import * as ImagePicker from "expo-image-picker";
-import { Camera, CameraType } from "expo-camera";
-import { Alert } from "react-native";
-import {LineChart} from "react-native-chart-kit";
+import React, { useEffect, useRef, useState } from "react";
+import {
+  ActivityIndicator,
+  AsyncStorage,
+  Dimensions,
+  Image,
+  LogBox,
+  Modal,
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  Button,
+  Alert,
+} from "react-native";
+import { LineChart, PieChart, StackedBarChart } from "react-native-chart-kit";
+import { Colors, Text, View } from "react-native-ui-lib";
+import { WebView } from "react-native-webview";
+import {
+  AdjustmentIcon,
+  ChevronDownIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  MegaphoneIcon,
+  MoneyIcon,
+  PlusIcon,
+  PresentationChartBarIcon,
+  RooketIcon,
+  TimesIcon,
+  TrashIcon,
+  USDIcon,
+} from "./icon";
+import { Picker } from "@react-native-picker/picker";
+import RNDateTimePicker from "@react-native-community/datetimepicker";
 
 LogBox.ignoreLogs(["Warning: ..."]); // Ignore log notification by message
 LogBox.ignoreAllLogs(); //Ignore all log notifications
 if (firebase.apps.length === 0) {
   firebase.initializeApp({
-    apiKey: "AIzaSyBuocRVjJfPPYyAfu00Ldl7Sr9QHxUFVKk",
-    authDomain: "app-ads-eac1a.firebaseapp.com",
-    projectId: "app-ads-eac1a",
-    storageBucket: "app-ads-eac1a.appspot.com",
-    messagingSenderId: "447537416665",
-    appId: "1:447537416665:web:7a86e37d5b7a8cf361f1c8",
+    apiKey: "AIzaSyBTUyfZCSxfFp1IhgxZ0lrxcUqwYEPL_1c",
+    authDomain: "caulong-8501c.firebaseapp.com",
+    databaseURL: "https://caulong-8501c-default-rtdb.firebaseio.com",
+    projectId: "caulong-8501c",
+    storageBucket: "caulong-8501c.appspot.com",
+    messagingSenderId: "1071504106180",
+    appId: "1:1071504106180:web:c611f54517b6195909df91",
+    measurementId: "G-M9PVD5ZGGB",
   });
 }
 const delay = (ms) => new Promise((res) => setTimeout(res, ms));
@@ -63,6 +74,30 @@ const updDocument = async (collection, data, docid) => {
     await firebase.firestore().collection(collection).doc(docid).update(data);
   } catch (error) {
     console.log("error :>> ", error);
+  }
+};
+
+const getDataList = async (collection, limit = 3) => {
+  try {
+    let dataList = [];
+    await firebase
+      .firestore()
+      .collection(collection)
+      .orderBy("createdAt", "desc")
+      .limit(limit)
+      .get()
+      .then((querySnapshot) => {
+        console.log(querySnapshot.docs);
+        const data = [];
+        querySnapshot.forEach((doc) => {
+          data.push({ ...doc.data(), docId: doc.id });
+        });
+        dataList = data;
+      });
+    return dataList;
+  } catch (error) {
+    console.log("error :>> ", error);
+    return [];
   }
 };
 
@@ -112,7 +147,7 @@ const _request = async ({ url, body, headers = {} }, cookie) => {
   }
 };
 
-const Colors = {
+Colors.loadColors({
   primaryColor: "#039dc1", // Blue
   secondaryColor: "#36D7B7", // Teal
   textColor: "#595959", // Dark Gray
@@ -134,7 +169,7 @@ const Colors = {
   bgSuccessLight: "#dcedc8", // Light Green
   bgWarnLight: "#fff9c4", // Light Yellow
   bgPrimaryDark: "#038ac1",
-};
+});
 
 function MainScreen({ navigation }) {
   const [modalVisible, setModalVisible] = useState(false);
@@ -183,7 +218,6 @@ function MainScreen({ navigation }) {
     try {
       if (event.nativeEvent.data) {
         let data = JSON.parse(event.nativeEvent.data);
-        console.log(data);
       }
     } catch (error) {
       console.log("error :>> ", error);
@@ -244,659 +278,6 @@ function MainScreen({ navigation }) {
     </View>
   );
 }
-
-const BellIcon = (props) => (
-  <Svg
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth={1.5}
-    aria-hidden="true"
-    viewBox="0 0 24 24"
-    width={24}
-    height={24}
-    color="#000000"
-    {...props}
-  >
-    <Path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0"
-    />
-  </Svg>
-);
-
-const MegaphoneIcon = (props) => (
-  <Svg
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth={1.5}
-    aria-hidden="true"
-    viewBox="0 0 24 24"
-    width={24}
-    height={24}
-    color="#000000"
-    {...props}
-  >
-    <Path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M10.34 15.84a24.07 24.07 0 0 0-2.09-.09H7.5a4.5 4.5 0 1 1 0-9h.75c.704 0 1.402-.03 2.09-.09m0 9.18c.253.962.584 1.892.985 2.783.247.55.06 1.21-.463 1.511l-.657.38c-.551.318-1.26.117-1.527-.461a20.845 20.845 0 0 1-1.44-4.282m3.102.069a18.03 18.03 0 0 1-.59-4.59c0-1.586.205-3.124.59-4.59m0 9.18a23.848 23.848 0 0 1 8.835 2.535M10.34 6.66a23.847 23.847 0 0 0 8.835-2.535m0 0A23.74 23.74 0 0 0 18.795 3m.38 1.125a23.91 23.91 0 0 1 1.014 5.395m-1.014 8.855c-.118.38-.245.754-.38 1.125m.38-1.125a23.91 23.91 0 0 0 1.014-5.395m0-3.46a2.249 2.249 0 0 1 0 3.46m0-3.46a24.347 24.347 0 0 1 0 3.46"
-    />
-  </Svg>
-);
-
-const PublicIcon = (props) => (
-  <Svg
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth={1.5}
-    aria-hidden="true"
-    viewBox="0 0 24 24"
-    width={24}
-    height={24}
-    color="#000000"
-    {...props}
-  >
-    <Path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M12 21a9.004 9.004 0 0 0 8.716-6.747M12 21a9.004 9.004 0 0 1-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 0 1 7.843 4.582M12 3a8.997 8.997 0 0 0-7.843 4.582m15.686 0A11.953 11.953 0 0 1 12 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0 1 21 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0 1 12 16.5a17.92 17.92 0 0 1-8.716-2.247m0 0A9.015 9.015 0 0 1 3 12c0-1.605.42-3.113 1.157-4.418"
-    />
-  </Svg>
-);
-
-const CameraIcon = (props) => (
-  <Svg
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth={1.5}
-    aria-hidden="true"
-    viewBox="0 0 24 24"
-    width={24}
-    height={24}
-    color="#000000"
-    {...props}
-  >
-    <Path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316z"
-    />
-    <Path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0zm2.25-2.25h.008v.008h-.008V10.5z"
-    />
-  </Svg>
-);
-
-const FaceSmileIcon = (props) => (
-  <Svg
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth={1.5}
-    aria-hidden="true"
-    viewBox="0 0 24 24"
-    width={24}
-    height={24}
-    color="#000000"
-    {...props}
-  >
-    <Path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M15.182 15.182a4.5 4.5 0 0 1-6.364 0M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM9.75 9.75c0 .414-.168.75-.375.75S9 10.164 9 9.75 9.168 9 9.375 9s.375.336.375.75zm-.375 0h.008v.015h-.008V9.75zm5.625 0c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75zm-.375 0h.008v.015h-.008V9.75z"
-    />
-  </Svg>
-);
-const VideoCameraIcon = (props) => (
-  <Svg
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth={1.5}
-    aria-hidden="true"
-    viewBox="0 0 24 24"
-    width={24}
-    height={24}
-    color="#000000"
-    {...props}
-  >
-    <Path
-      strokeLinecap="round"
-      d="m15.75 10.5 4.72-4.72a.75.75 0 0 1 1.28.53v11.38a.75.75 0 0 1-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25h-9A2.25 2.25 0 0 0 2.25 7.5v9a2.25 2.25 0 0 0 2.25 2.25z"
-    />
-  </Svg>
-);
-
-const ClockIcon = (props) => (
-  <Svg
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth={1.5}
-    aria-hidden="true"
-    viewBox="0 0 24 24"
-    width={24}
-    height={24}
-    color="#000000"
-    {...props}
-  >
-    <Path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"
-    />
-  </Svg>
-);
-
-const MapPinIcon = (props) => (
-  <Svg
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth={1.5}
-    aria-hidden="true"
-    viewBox="0 0 24 24"
-    width={24}
-    height={24}
-    color="#000000"
-    {...props}
-  >
-    <Path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"
-    />
-    <Path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0z"
-    />
-  </Svg>
-);
-const PhotoIcon = (props) => (
-  <Svg
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth={1.5}
-    aria-hidden="true"
-    viewBox="0 0 24 24"
-    width={24}
-    height={24}
-    color="#000000"
-    {...props}
-  >
-    <Path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0z"
-    />
-  </Svg>
-);
-
-const TimesIcon = (props) => (
-  <Svg
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth={1.5}
-    aria-hidden="true"
-    viewBox="0 0 24 24"
-    width={24}
-    height={24}
-    color="#000000"
-    {...props}
-  >
-    <Path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M6 18 18 6M6 6l12 12"
-    />
-  </Svg>
-);
-
-const TrashIcon = (props) => (
-  <Svg
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth={1.5}
-    aria-hidden="true"
-    viewBox="0 0 24 24"
-    width={24}
-    height={24}
-    color="#000000"
-    {...props}
-  >
-    <Path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
-    />
-  </Svg>
-);
-
-const PlusOutlineIcon = (props) => (
-  <Svg
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth={1.5}
-    aria-hidden="true"
-    viewBox="0 0 24 24"
-    width={24}
-    height={24}
-    color="#000000"
-    {...props}
-  >
-    <Path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M12 4.5v15m7.5-7.5h-15"
-    />
-  </Svg>
-);
-
-const PlusIcon = (props) => (
-  <Svg
-    xmlns="http://www.w3.org/2000/svg"
-    fill="currentColor"
-    aria-hidden="true"
-    viewBox="0 0 20 20"
-    width={24}
-    height={24}
-    color="#000000"
-    {...props}
-  >
-    <Path
-      fillRule="evenodd"
-      d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm.75-11.25a.75.75 0 0 0-1.5 0v2.5h-2.5a.75.75 0 0 0 0 1.5h2.5v2.5a.75.75 0 0 0 1.5 0v-2.5h2.5a.75.75 0 0 0 0-1.5h-2.5v-2.5z"
-      clipRule="evenodd"
-    />
-  </Svg>
-);
-
-const InformationCircleIcon = (props) => (
-  <Svg
-    xmlns="http://www.w3.org/2000/svg"
-    fill="currentColor"
-    aria-hidden="true"
-    viewBox="0 0 20 20"
-    width={24}
-    height={24}
-    color="#000000"
-    {...props}
-  >
-    <Path
-      fillRule="evenodd"
-      d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM9 9a.75.75 0 0 0 0 1.5h.253a.25.25 0 0 1 .244.304l-.459 2.066A1.75 1.75 0 0 0 10.747 15H11a.75.75 0 0 0 0-1.5h-.253a.25.25 0 0 1-.244-.304l.459-2.066A1.75 1.75 0 0 0 9.253 9H9z"
-      clipRule="evenodd"
-    />
-  </Svg>
-);
-
-const ArrowLongIcon = (props) => (
-  <Svg
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth={1.5}
-    aria-hidden="true"
-    viewBox="0 0 24 24"
-    width={24}
-    height={24}
-    color="#000000"
-    {...props}
-  >
-    <Path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3"
-    />
-  </Svg>
-);
-const ArrowUpIcon = (props) => (
-  <Svg
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth={1.5}
-    aria-hidden="true"
-    viewBox="0 0 24 24"
-    width={24}
-    height={24}
-    color="#000000"
-    {...props}
-  >
-    <Path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M12 19.5v-15m0 0-6.75 6.75M12 4.5l6.75 6.75"
-    />
-  </Svg>
-);
-
-const ArrowPathIcon = (props) => (
-  <Svg
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth={1.5}
-    aria-hidden="true"
-    viewBox="0 0 24 24"
-    width={24}
-    height={24}
-    color="#000000"
-    {...props}
-  >
-    <Path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"
-    />
-  </Svg>
-);
-
-const NewsIcon = (props) => (
-  <Svg
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth={1.5}
-    aria-hidden="true"
-    viewBox="0 0 24 24"
-    width={24}
-    height={24}
-    color="#000000"
-    {...props}
-  >
-    <Path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 0 1-2.25 2.25M16.5 7.5V18a2.25 2.25 0 0 0 2.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 0 0 2.25 2.25h13.5M6 7.5h3v3H6v-3z"
-    />
-  </Svg>
-);
-
-const ChatBubbleLeftEllipsisIcon = (props) => (
-  <Svg
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth={1.5}
-    aria-hidden="true"
-    viewBox="0 0 24 24"
-    width={24}
-    height={24}
-    color="#000000"
-    {...props}
-  >
-    <Path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a5.969 5.969 0 0 1-.474-.065 4.48 4.48 0 0 0 .978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z"
-    />
-  </Svg>
-);
-
-const Bars3Icon = (props) => (
-  <Svg
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth={1.5}
-    aria-hidden="true"
-    viewBox="0 0 24 24"
-    width={24}
-    height={24}
-    color="#000000"
-    {...props}
-  >
-    <Path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
-    />
-  </Svg>
-);
-
-const MagnifyingGlassIcon = (props) => (
-  <Svg
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth={1.5}
-    aria-hidden="true"
-    viewBox="0 0 24 24"
-    width={24}
-    height={24}
-    color="#000000"
-    {...props}
-  >
-    <Path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607z"
-    />
-  </Svg>
-);
-
-const CalendarIcon = (props) => (
-  <Svg
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth={1.5}
-    aria-hidden="true"
-    viewBox="0 0 24 24"
-    width={24}
-    height={24}
-    color="#000000"
-    {...props}
-  >
-    <Path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5m-9-6h.008v.008H12v-.008zM12 15h.008v.008H12V15zm0 2.25h.008v.008H12v-.008zM9.75 15h.008v.008H9.75V15zm0 2.25h.008v.008H9.75v-.008zM7.5 15h.008v.008H7.5V15zm0 2.25h.008v.008H7.5v-.008zm6.75-4.5h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V15zm0 2.25h.008v.008h-.008v-.008zm2.25-4.5h.008v.008H16.5v-.008zm0 2.25h.008v.008H16.5V15z"
-    />
-  </Svg>
-);
-
-const CheckedIcon = (props) => (
-  <Svg
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth={1.5}
-    aria-hidden="true"
-    viewBox="0 0 24 24"
-    width={24}
-    height={24}
-    color="#000000"
-    {...props}
-  >
-    <Path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"
-    />
-  </Svg>
-);
-
-const LikeIcon = (props) => (
-  <Svg
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth={1.5}
-    aria-hidden="true"
-    viewBox="0 0 24 24"
-    width={24}
-    height={24}
-    color="#000000"
-    {...props}
-  >
-    <Path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M6.633 10.5c.806 0 1.533-.446 2.031-1.08a9.041 9.041 0 0 1 2.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 0 0 .322-1.672V3a.75.75 0 0 1 .75-.75A2.25 2.25 0 0 1 16.5 4.5c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 0 1-2.649 7.521c-.388.482-.987.729-1.605.729H13.48a4.53 4.53 0 0 1-1.423-.23l-3.114-1.04a4.501 4.501 0 0 0-1.423-.23H5.904M14.25 9h2.25M5.904 18.75c.083.205.173.405.27.602.197.4-.078.898-.523.898h-.908c-.889 0-1.713-.518-1.972-1.368a12 12 0 0 1-.521-3.507c0-1.553.295-3.036.831-4.398C3.387 10.203 4.167 9.75 5 9.75h1.053c.472 0 .745.556.5.96a8.958 8.958 0 0 0-1.302 4.665 8.97 8.97 0 0 0 .654 3.375z"
-    />
-  </Svg>
-);
-
-const CommentIcon = (props) => (
-  <Svg
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth={1.5}
-    aria-hidden="true"
-    viewBox="0 0 24 24"
-    width={24}
-    height={24}
-    color="#000000"
-    {...props}
-  >
-    <Path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 0 1 .865-.501 48.172 48.172 0 0 0 3.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z"
-    />
-  </Svg>
-);
-
-const BookMarkIcon = (props) => (
-  <Svg
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth={1.5}
-    aria-hidden="true"
-    viewBox="0 0 24 24"
-    width={24}
-    height={24}
-    color="#000000"
-    {...props}
-  >
-    <Path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0z"
-    />
-  </Svg>
-);
-
-const ShareIcon = (props) => (
-  <Svg
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth={1.5}
-    aria-hidden="true"
-    viewBox="0 0 24 24"
-    width={24}
-    height={24}
-    color="#000000"
-    {...props}
-  >
-    <Path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186 9.566-5.314m-9.566 7.5 9.566 5.314m0 0a2.25 2.25 0 1 0 3.935 2.186 2.25 2.25 0 0 0-3.935-2.186zm0-12.814a2.25 2.25 0 1 0 3.933-2.185 2.25 2.25 0 0 0-3.933 2.185z"
-    />
-  </Svg>
-);
-
-const ChevronRightIcon = (props) => (
-  <Svg
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth={1.5}
-    aria-hidden="true"
-    viewBox="0 0 24 24"
-    width={24}
-    height={24}
-    color="#000000"
-    {...props}
-  >
-    <Path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="m8.25 4.5 7.5 7.5-7.5 7.5"
-    />
-  </Svg>
-);
-
-const PaperAirplaneIcon = (props) => (
-  <Svg
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth={1.5}
-    aria-hidden="true"
-    viewBox="0 0 24 24"
-    width={24}
-    height={24}
-    color="#000000"
-    {...props}
-  >
-    <Path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M6 12 3.269 3.126A59.768 59.768 0 0 1 21.485 12 59.77 59.77 0 0 1 3.27 20.876L5.999 12zm0 0h7.5"
-    />
-  </Svg>
-);
-
-const ChevronLeftIcon = (props) => (
-  <Svg
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth={1.5}
-    aria-hidden="true"
-    viewBox="0 0 24 24"
-    width={24}
-    height={24}
-    color="#000000"
-    {...props}
-  >
-    <Path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M15.75 19.5 8.25 12l7.5-7.5"
-    />
-  </Svg>
-);
-
-const TakeCamera = (props) => (
-  <Svg
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth={1.5}
-    aria-hidden="true"
-    viewBox="0 0 24 24"
-    width={24}
-    height={24}
-    color="#000000"
-    {...props}
-  >
-    <Path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M7.5 3.75H6A2.25 2.25 0 0 0 3.75 6v1.5M16.5 3.75H18A2.25 2.25 0 0 1 20.25 6v1.5m0 9V18A2.25 2.25 0 0 1 18 20.25h-1.5m-9 0H6A2.25 2.25 0 0 1 3.75 18v-1.5M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"
-    />
-  </Svg>
-);
 
 //===================
 function PushNotifyScreen({ navigation }) {
@@ -1171,1117 +552,259 @@ function SocialAuthScreen({ navigation }) {
   );
 }
 
-function LoadScreen({ navigation }) {
-  useEffect(
-    () =>
-      navigation.addListener("beforeRemove", (e) => {
-        e.preventDefault();
-        return;
-      }),
-    [navigation]
-  );
+function ExtendComponent({ campaign_name, ...content }) {
+  const [isExtend, setIsExtend] = useState(false);
+
+  const contentData = Object.entries(content)
+    .sort();
+
+    console.log(contentData);
   return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Image
-        source={require("./assets/images/logo.png")}
-        style={{
-          resizeMode: "contain",
-          width: 250,
-          height: 120,
-          marginLeft: 0,
-          marginTop: 0,
-        }}
-      />
-      <Image
-        source={require("./assets/images/loading.gif")}
-        style={{ width: 35, height: 35 }}
-      />
-      <Text style={{ fontSize: 14 }}>Verifying...</Text>
-      <Text style={{ fontSize: 14 }}>Please do not close the app</Text>
-    </View>
-  );
-}
-
-function Comments({ data, loading, styles }) {
-  console.log("data");
-  if (loading) {
-    return (
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "center",
-          alignItems: "center",
-          padding: 50,
-          height: 300,
-        }}
-      >
-        <Image
-          source={require("./assets/images/loading.gif")}
-          style={{ width: 35, height: 35 }}
-        />
-      </View>
-    );
-  }
-  if (data.length === 0) {
-    return (
-      <View
-        style={{
-          justifyContent: "center",
-          alignItems: "center",
-          padding: 50,
-        }}
-      >
-        <Image
-          source={require("./assets/images/empty.png")}
-          style={{ width: 120, height: 99, objectFit: "cover" }}
-        />
-        <Text style={{ fontWeight: "bold", marginTop: 10, fontSize: 16 }}>
-          No planer to show
-        </Text>
-        <Text
-          style={{
-            marginTop: 10,
-            fontSize: 13,
-            textAlign: "center",
-            color: Colors.textColor,
-          }}
-        >
-          Planer mentioning or tagging your company will appear here.
-        </Text>
-      </View>
-    );
-  }
-
-  return (
-    <ScrollView contentContainerStyle={styles}>
-      {data.map((item, index) => (
-        <TouchableOpacity
-          key={item.title}
-          style={[
-            stylesHomePage.card,
-            stylesHomePage.shadowProp,
-            {
-              marginTop: 10,
-              borderBottomWidth: 1,
-              borderColor: Colors.bgSecondaryLight,
-              flexDirection: "row",
-              paddingHorizontal: 10,
-              paddingVertical: 10,
-              alignItems: "center",
-            },
-          ]}
-        >
-          <Image
-            style={{
-              width: 50,
-              height: 50,
-              borderRadius: 999,
-              objectFit: "cover",
-            }}
-            source={require("./assets/images/image-1.jpg")}
-          />
-          <View style={{ position: "relative", width: '80%', flexGrow: 2, left: 10 }}>
-            <Text style={{ fontWeight: "700" }}>{item.author}</Text>
-            <Text
-              style={{
-                marginTop: 5,
-                fontWeight: "400",
-              }}
-            >
-              {item.text}
-            </Text>
-            {item.read ? null : (
-              <View
-                style={[
-                  stylesHomePage.bage,
-                  {
-                    top: 0,
-                    right: 5,
-                  },
-                ]}
-              />
-            )}
-            <Text
-              style={{
-                position: "absolute",
-                left: 0,
-                bottom: -5,
-                color: Colors.successColor,
-              }}
-            >
-              Likes: {item.likes}
-            </Text>
-            <Text
-              style={{
-                position: "absolute",
-                right: 0,
-                bottom: -5,
-                color: Colors.primaryColor,
-              }}
-            >
-              {new Date(item.timestamp).toDateString()}
-            </Text>
-            <View style={{ height: 20 }}></View>
-          </View>
-        </TouchableOpacity>
-      ))}
-    </ScrollView>
-  );
-}
-
-function Messages({ data, loading, styles }) {
-  console.log("data");
-  if (loading) {
-    return (
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "center",
-          alignItems: "center",
-          padding: 50,
-          height: 300,
-        }}
-      >
-        <Image
-          source={require("./assets/images/loading.gif")}
-          style={{ width: 35, height: 35 }}
-        />
-      </View>
-    );
-  }
-  if (data.length === 0) {
-    return (
-      <View
-        style={{
-          justifyContent: "center",
-          alignItems: "center",
-          padding: 50,
-        }}
-      >
-        <Image
-          source={require("./assets/images/empty.png")}
-          style={{ width: 120, height: 99, objectFit: "cover" }}
-        />
-        <Text style={{ fontWeight: "bold", marginTop: 10, fontSize: 16 }}>
-          No planer to show
-        </Text>
-        <Text
-          style={{
-            marginTop: 10,
-            fontSize: 13,
-            textAlign: "center",
-            color: Colors.textColor,
-          }}
-        >
-          Planer mentioning or tagging your company will appear here.
-        </Text>
-      </View>
-    );
-  }
-
-  return (
-    <ScrollView contentContainerStyle={styles}>
-      {data.map((item, index) => (
-        <TouchableOpacity
-          key={item.title}
-          style={[
-            stylesHomePage.card,
-            stylesHomePage.shadowProp,
-            {
-              marginTop: 10,
-              borderBottomWidth: 1,
-              borderColor: Colors.bgSecondaryLight,
-              flexDirection: "row",
-              paddingHorizontal: 10,
-              paddingVertical: 10,
-              alignItems: "center",
-            },
-          ]}
-        >
-          <Image
-            style={{
-              width: 50,
-              height: 50,
-              borderRadius: 999,
-              objectFit: "cover",
-            }}
-            source={require("./assets/images/image-1.jpg")}
-          />
-          <View style={{ position: "relative", width: '80%', flexGrow: 2, left: 10 }}>
-            <Text style={{ fontWeight: "700" }}>{item.sender}</Text>
-            <Text
-              style={{
-                marginTop: 5,
-                fontWeight: "400",
-              }}
-            >
-              {item.text}
-            </Text>
-            {item.read ? null : (
-              <View
-                style={[
-                  stylesHomePage.bage,
-                  {
-                    top: 0,
-                    right: 5,
-                  },
-                ]}
-              />
-            )}
-            <Text
-              style={{
-                position: "absolute",
-                right: 0,
-                bottom: -5,
-                color: Colors.primaryColor,
-              }}
-            >
-              {new Date(item.timestamp).toDateString()}
-            </Text>
-            <View style={{ height: 20 }}></View>
-          </View>
-        </TouchableOpacity>
-      ))}
-    </ScrollView>
-  );
-}
-
-function Planners({ data, loading, styles }) {
-  console.log("data");
-  if (loading) {
-    return (
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "center",
-          alignItems: "center",
-          padding: 50,
-          height: 300,
-        }}
-      >
-        <Image
-          source={require("./assets/images/loading.gif")}
-          style={{ width: 35, height: 35 }}
-        />
-      </View>
-    );
-  }
-  if (data.length === 0) {
-    return (
-      <View
-        style={{
-          justifyContent: "center",
-          alignItems: "center",
-          padding: 50,
-        }}
-      >
-        <Image
-          source={require("./assets/images/empty.png")}
-          style={{ width: 120, height: 99, objectFit: "cover" }}
-        />
-        <Text style={{ fontWeight: "bold", marginTop: 10, fontSize: 16 }}>
-          No planer to show
-        </Text>
-        <Text
-          style={{
-            marginTop: 10,
-            fontSize: 13,
-            textAlign: "center",
-            color: Colors.textColor,
-          }}
-        >
-          Planer mentioning or tagging your company will appear here.
-        </Text>
-      </View>
-    );
-  }
-
-  return (
-    <ScrollView contentContainerStyle={styles}>
-      {data.map((item, index) => (
-        <TouchableOpacity
-          key={item.title}
-          style={[
-            stylesHomePage.card,
-            stylesHomePage.shadowProp,
-            {
-              marginTop: 10,
-              borderBottomWidth: 1,
-              borderColor: Colors.bgSecondaryLight,
-              flexDirection: "row",
-              paddingHorizontal: 10,
-              paddingVertical: 10,
-              alignItems: "center",
-            },
-          ]}
-        >
-          <View style={{ position: "relative", flexGrow: 2 }}>
-            <Text style={{ fontWeight: "700" }}>{item.title}</Text>
-            <Text
-              style={{
-                marginTop: 5,
-                fontWeight: "400",
-              }}
-            >
-              {item.description}
-            </Text>
-            <Text
-              style={{
-                position: "absolute",
-                left: 0,
-                bottom: -5,
-                color: Colors.warnColor,
-              }}
-            >
-              Location: {item.location}
-            </Text>
-            <Text
-              style={{
-                position: "absolute",
-                right: 0,
-                bottom: -5,
-                color: Colors.primaryColor,
-              }}
-            >
-              {item.date + " - " + item.time || "12:30PM"}
-            </Text>
-            <View style={{ height: 20 }}></View>
-          </View>
-        </TouchableOpacity>
-      ))}
-    </ScrollView>
-  );
-}
-
-function ListPosts({ posts, loading, styles }) {
-  if (loading) {
-    return (
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "center",
-          alignItems: "center",
-          padding: 50,
-          height: 300,
-        }}
-      >
-        <Image
-          source={require("./assets/images/loading.gif")}
-          style={{ width: 35, height: 35 }}
-        />
-      </View>
-    );
-  }
-  if (posts.length === 0) {
-    return (
-      <View
-        style={{
-          justifyContent: "center",
-          alignItems: "center",
-          padding: 50,
-        }}
-      >
-        <Image
-          source={require("./assets/images/empty.png")}
-          style={{ width: 120, height: 99, objectFit: "cover" }}
-        />
-        <Text style={{ fontWeight: "bold", marginTop: 10, fontSize: 16 }}>
-          No post to show
-        </Text>
-        <Text
-          style={{
-            marginTop: 10,
-            fontSize: 13,
-            textAlign: "center",
-            color: Colors.textColor,
-          }}
-        >
-          Posts mentioning or tagging your company will appear here.
-        </Text>
-      </View>
-    );
-  }
-
-  return (
-    <ScrollView contentContainerStyle={styles}>
-      {posts.map((item, index) => (
+    <View paddingH-10 marginT-20>
+      <View borderRadius={10} borderWidth borderColor={Colors.$textDisabled}>
         <View
-          key={index}
-          style={[
-            stylesHomePage.card,
-            stylesHomePage.shadowProp,
-            {
-              flexDirection: "row",
-              alignItems: "center",
-              padding: 10,
-              marginTop: 20,
-            },
-          ]}
+          paddingV-10
+          paddingH-10
+          borderRadius={10}
+          row
+          centerV
+          spread
+          style={{
+            height: 50,
+            backgroundColor: isExtend
+              ? Colors.$backgroundNeutral
+              : Colors.$backgroundElevated,
+          }}
+          onPress={() => setIsExtend(!isExtend)}
         >
-          <Image
-            source={require("./assets/images/image-1.jpg")}
-            full
-            style={{
-              width: 100,
-              height: 150,
-              borderRadius: 14,
-            }}
-          />
-          <View
-            style={{
-              height: 150,
-              justifyContent: "space-between",
-              marginLeft: 15,
-              flexGrow: 2,
-              width: "80%",
-            }}
+          <TouchableOpacity
+            style={{ height: "100%", width: "80%" }}
+            onPress={() => setIsExtend(!isExtend)}
           >
-            <View>
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                }}
-              >
-                <ClockIcon width={15} />
-                <Text
-                  style={{
-                    marginLeft: 2,
-                    color: Colors.textColor,
-                    fontSize: 12,
-                  }}
-                >
-                  {new Date(item.createdAt).toDateString()}
-                </Text>
-              </View>
-
-              <Text
-                style={{
-                  flexShrink: 1,
-                  color: Colors.textColor,
-                  fontSize: 16,
-                  fontWeight: "600",
-                  paddingRight: 30,
-                  height: 100,
-                }}
-              >
-                {item.text}
-              </Text>
-            </View>
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                width: "80%",
-                height: 30,
-                justifyContent: "space-around",
-              }}
-            >
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                }}
-              >
-                <LikeIcon width={20} />
-                <Text style={{ marginLeft: 2, color: Colors.textColor }}>
-                  {item.liked}
-                </Text>
-              </View>
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  marginLeft: 20,
-                }}
-              >
-                <CommentIcon width={20} />
-                <Text style={{ marginLeft: 2, color: Colors.textColor }}>
-                  {item.comments}
-                </Text>
-              </View>
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  marginLeft: 20,
-                }}
-              >
-                <ShareIcon width={20} />
-                <Text style={{ marginLeft: 2, color: Colors.textColor }}>
-                  {item.shared}
-                </Text>
-              </View>
-            </View>
-          </View>
+            <Text text70BO>{campaign_name}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{ height: "100%" }}
+            onPress={() => setIsExtend(!isExtend)}
+          >
+            {isExtend ? <ChevronRightIcon /> : <ChevronDownIcon />}
+          </TouchableOpacity>
         </View>
-      ))}
-    </ScrollView>
+        {isExtend ? (
+          <View paddingV-10 paddingH-10>
+            {contentData.map(([key, value], index) => {
+              return (
+                <View row spread paddingV-5 key={index}>
+                  <Text text70>{key}</Text>
+                  <Text text70BO>{value}</Text>
+                </View>
+              );
+            })}
+          </View>
+        ) : null}
+      </View>
+    </View>
   );
 }
 
 function HomeScreen({ navigation }) {
   const [loading, setLoading] = React.useState(false);
   const [countNoti, setCountNoti] = React.useState(0);
-  const [posts, setPosts] = React.useState([]);
+  const [campaigns, setCampaigns] = React.useState([]);
+  const route = useRoute();
 
-  function handleCreatePost() {
-    navigation.navigate("CreatePost");
-  }
+  const screenWidth = Dimensions.get("window").width - 40;
+  const chartConfig = {
+    backgroundGradientFrom: "#1E2923",
+    color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
+    strokeWidth: 2, // optional, default 3
+    barPercentage: 1,
+    style: {
+      borderRadius: 16,
+    },
+  };
+  const initData = async () => {
+    setLoading(true);
+    const data = await getDataList("campaigns");
+    console.log(data);
+    setCampaigns(data);
+    setLoading(false);
+  };
 
-  function onHandleExplore() {
-    navigation.navigate("ExploreScreen");
-  }
+  useFocusEffect(
+    React.useCallback(() => {
+      initData();
+    }, [])
+  );
 
-  function handleContent() {
-    navigation.navigate("ContentScreen");
-  }
+  const data = [
+    {
+      name: "Facebook",
+      population: 21500000,
+      color: Colors.primaryColor,
+      legendFontSize: 13,
+    },
+    {
+      name: "Google Ads",
+      population: 2800000,
+      color: Colors.$outlineWarning,
+      legendFontSize: 13,
+    },
+    {
+      name: "Twitter",
+      population: 11920000,
+      color: Colors.$iconSuccessLight,
+      legendFontSize: 13,
+    },
+  ];
 
-  function handleGoNotifications() {
-    navigation.navigate("Notifications");
-  }
+  const generateData = () => {
+    const months = ["Jan", "Feb", "Mar", "Apr"];
+    const categories = ["Facebook", "Google Ads", "Twitter"];
 
-  React.useEffect(() => {
-    const initData = async () => {
-      await firebase
-        .firestore()
-        .collection("notifications")
-        .where("readed", "==", false)
-        .onSnapshot((querySnapshot) => {
-          setCountNoti(querySnapshot.size);
+    return {
+      labels: months,
+      legend: categories,
+      data: months.map((category) => {
+        return categories.map((month) => {
+          // Replace this logic with your own data generation
+          // For example, you could generate random numbers
+          return Math.floor(Math.random() * 50) + 20;
         });
+      }),
+      barColors: [
+        Colors.primaryColor, // Facebook
+        Colors.$outlineWarning, // Google Ads
+        Colors.$iconSuccessLight, // Twitter
+      ],
     };
-    initData();
-  }, []);
+  };
 
-  React.useEffect(() => {
-    const initData = async () => {
-      setLoading(true);
-      await firebase
-        .firestore()
-        .collection("posts")
-        .orderBy("createdAt", "desc")
-        .limit(3)
-        .get()
-        .then((querySnapshot) => {
-          console.log(querySnapshot.docs);
-          const data = [];
-          querySnapshot.forEach((doc) => {
-            data.push({ ...doc.data(), docId: doc.id });
-          });
-          setPosts(data);
-          setLoading(false);
-        });
-    };
-    initData();
-  }, []);
+  // Example usage
+  const dataBar = generateData();
+
+  const barChartConfig = {
+    backgroundGradientFrom: "#ffffff",
+    backgroundGradientTo: "#ffffff",
+    fillShadowGradientFrom: "#ffffff",
+    fillShadowGradient: "skyblue",
+    fillShadowGradientOpacity: 1,
+    propsForBackgroundLines: {
+      strokeDasharray: [2, 15],
+    },
+    color: (opacity = 1) => Colors.textColor,
+    labelColor: (opacity = 1) => Colors.textColor,
+    strokeWidth: 1, // optional, default 3
+    barPercentage: 0.5,
+    useShadowColorFromDataset: false,
+    propsForLabels: {
+      style: {
+        color: Colors.textWhite,
+      },
+    },
+  };
+
+  const dataCampaign = [
+    {
+      campaign_name: "Black Friday Deals",
+      spent: "$50000",
+      clicks: 100000,
+      conversion_rate: 0.02,
+      views: 2500000,
+      cpc: 0.25,
+    },
+    {
+      campaign_name: "Cyber Monday Deals",
+      spent: "$75000",
+      clicks: 150000,
+      conversion_rate: 0.03,
+      views: 3750000,
+      cpc: 0.5,
+    },
+    {
+      campaign_name: "Back to School Deals",
+      spent: "$100000",
+      clicks: 200000,
+      conversion_rate: 0.04,
+      views: 5000000,
+      cpc: 0.5,
+    },
+  ];
 
   return (
     <SafeAreaView style={stylesHomePage.container}>
-      <ScrollView flex style={{ overflow: "scroll" }}>
-        <View style={stylesHomePage.header}>
-          <TouchableOpacity style={stylesHomePage.icon}>
-            <View>
-              <Text
-                style={{
-                  fontSize: 13,
-                  marginLeft: 10,
-                  color: Colors.textColor,
-                }}
-              >
-                Welcome back
-              </Text>
-              <Text
-                style={{ fontSize: 18, marginLeft: 10, fontWeight: "bold" }}
-              >
-                John Doe
-              </Text>
-            </View>
-          </TouchableOpacity>
-          
-          <View style={{ flexDirection: "row" }}>
-            <TouchableOpacity
-              style={stylesHomePage.icon}
-              onPress={handleGoNotifications}
-            >
-              <BellIcon width={30} height={30} />
-              {countNoti ? (
-                <View style={stylesHomePage.bage}>
-                  <Text style={stylesHomePage.bageText}>{countNoti}</Text>
-                </View>
-              ) : (
-                <Text></Text>
-              )}
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={stylesHomePage.icon}
-              onPress={onHandleExplore}
-            >
-              <MegaphoneIcon width={30} height={30} />
-            </TouchableOpacity>
-          </View>
-        </View>
-        <View
-          style={{
-            paddingVertical: 25,
-            backgroundColor: "#F8F9FE",
-          }}
-        >
-          <LineChart
-            data={{
-              labels: ["January", "February", "March", "April", "May", "June"],
-              datasets: [
-                {
-                  data: [
-                    Math.random() * 100,
-                    Math.random() * 100,
-                    Math.random() * 100,
-                    Math.random() * 100,
-                    Math.random() * 100,
-                    Math.random() * 100
-                  ]
-                }
-              ]
-            }}
-            width={Dimensions.get("window").width} // from react-native
-            height={220}
-            yAxisLabel="$"
-            yAxisSuffix="k"
-            yAxisInterval={1} // optional, defaults to 1
-            chartConfig={{
-              backgroundColor: "#e26a00",
-              backgroundGradientFrom: "#fb8c00",
-              backgroundGradientTo: "#ffa726",
-              decimalPlaces: 2, // optional, defaults to 2dp
-              color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-              labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-              style: {
-                borderRadius: 16
-              },
-              propsForDots: {
-                r: "6",
-                strokeWidth: "2",
-                stroke: "#ffa726"
-              }
-            }}
+      <View
+        row
+        centerV
+        spread
+        paddingH-20
+        paddingV-10
+        backgroundColor={Colors.textWhite}
+      >
+        <Text marginT-10 text60BO>
+          Dashboard
+        </Text>
+        <TouchableOpacity onPress={() => navigation.navigate("SettingScreen")}>
+          <AdjustmentIcon width={30} height={30} color={Colors.textColor} />
+        </TouchableOpacity>
+      </View>
+      <ScrollView
+        flex
+        style={{ overflow: "scroll", backgroundColor: Colors.primaryColor }}
+      >
+        <View paddingH-20 marginT-20 style={{ position: "relative" }}>
+          <PieChart
+            data={data}
+            width={screenWidth}
+            height={240}
+            chartConfig={chartConfig}
+            accessor={"population"}
+            backgroundColor={Colors.textWhite}
+            paddingLeft={"15"}
+            style={{ borderRadius: 16 }}
             bezier
-            style={{
-              marginVertical: 8,
-              borderRadius: 16
-            }}
           />
-          <View style={{ paddingHorizontal: 40 }}>
-            <View
-              style={[
-                stylesHomePage.card,
-                stylesHomePage.shadowProp,
-                {
-                  padding: 20,
-                  height: 250,
-                  borderRadius: 24,
-                },
-              ]}
-            >
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  width: "100%",
-                  paddingHorizontal: 30,
-                }}
-              >
-                <View
-                  style={{
-                    borderRadius: 18,
-                    borderColor: Colors.primaryColor,
-                    borderWidth: 2,
-                    padding: 5,
-                  }}
-                >
-                  <Image
-                    source={require("./assets/images/image-1.jpg")}
-                    full
-                    style={{
-                      width: 60,
-                      height: 60,
-                      borderRadius: 14,
-                    }}
-                  />
-                </View>
-                <View style={{ marginLeft: 25 }}>
-                  <Text
-                    style={{
-                      fontSize: 13,
-                      color: Colors.textColor,
-                    }}
-                  >
-                    @johndoe
-                  </Text>
-                  <Text
-                    style={{ fontSize: 18, fontWeight: "bold", marginTop: 5 }}
-                  >
-                    John Doe
-                  </Text>
-                  <Text
-                    style={{
-                      fontSize: 15,
-                      fontWeight: "500",
-                      color: Colors.primaryColor,
-                      marginTop: 5,
-                    }}
-                  >
-                    Developer
-                  </Text>
-                </View>
-              </View>
-              <View style={{ paddingHorizontal: 30, marginTop: 20 }}>
-                <Text style={{ fontSize: 18, fontWeight: "bold" }}>
-                  About me
-                </Text>
-                <Text style={{ color: Colors.textColor, marginTop: 10 }}>
-                  Madison blackstone is a director of user experience manaing
-                  global teams.
-                </Text>
-              </View>
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  height: 60,
-                  position: "relative",
-                  bottom: -20,
-                }}
-              >
-                <View
-                  style={{
-                    position: "relative",
-                    right: -25,
-                    height: "100%",
-                    width: 80,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    backgroundColor: Colors.bgPrimaryDark,
-                    borderRadius: 16,
-                    zIndex: 9,
-                  }}
-                >
-                  <Text
-                    style={{
-                      color: Colors.textWhite,
-                      fontSize: 22,
-                      fontWeight: "bold",
-                    }}
-                  >
-                    52
-                  </Text>
-                  <Text style={{ fontSize: 12, color: Colors.textWhite }}>
-                    Post
-                  </Text>
-                </View>
-                <View
-                  style={{
-                    height: "100%",
-                    width: 120,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    backgroundColor: Colors.primaryColor,
-                    borderRadius: 16,
-                  }}
-                >
-                  <Text
-                    style={{
-                      color: Colors.textWhite,
-                      fontSize: 22,
-                      fontWeight: "bold",
-                    }}
-                  >
-                    512
-                  </Text>
-                  <Text style={{ fontSize: 12, color: Colors.textWhite }}>
-                    Following
-                  </Text>
-                </View>
-                <View
-                  style={{
-                    position: "relative",
-                    left: -25,
-                    height: "100%",
-                    width: 80,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    backgroundColor: Colors.primaryColor,
-                    borderRadius: 16,
-                  }}
-                >
-                  <Text
-                    style={{
-                      color: Colors.textWhite,
-                      fontSize: 22,
-                      fontWeight: "bold",
-                    }}
-                  >
-                    5.2K
-                  </Text>
-                  <Text style={{ fontSize: 12, color: Colors.textWhite }}>
-                    Followers
-                  </Text>
-                </View>
-              </View>
-            </View>
-          </View>
           <View
             style={{
-              borderRadius: 24,
+              position: "absolute",
+              width: 100,
+              height: 100,
+              borderRadius: 9999,
+              top: 70,
+              left: 80,
               backgroundColor: "#ffffff",
-              marginTop: 50,
-              paddingVertical: 20,
-              paddingHorizontal: 20,
-              paddingBottom: 40,
-              shadowOffset: { width: 0, height: 2 },
-              shadowColor: "#808080",
-              shadowOpacity: 0.2,
-              shadowRadius: 12,
             }}
-          >
-            <View
-              style={{ flexDirection: "row", justifyContent: "space-between" }}
-            >
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                }}
-              >
-                <ClockIcon />
-                <Text style={stylesHomePage.headerText}> Recent posts</Text>
-              </View>
-              <View style={{ flexDirection: "row" }}>
-                <TouchableOpacity onPress={handleCreatePost}>
-                  <PhotoIcon />
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={handleCreatePost}
-                  style={{ marginLeft: 15 }}
-                >
-                  <PlusOutlineIcon />
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={handleContent}
-                  style={{ marginLeft: 15 }}
-                >
-                  <ChevronRightIcon />
-                </TouchableOpacity>
-              </View>
-            </View>
-            <View>
-              <ListPosts posts={posts} loading={loading} />
-            </View>
-            <View
-              style={[
-                stylesHomePage.shadowProp,
-                { position: "relative", marginTop: 20, alignItems: "center" },
-              ]}
-            >
-              <Image
-                source={require("./assets/images/sky-1.png")}
-                full
-                style={{
-                  width: "100%",
-                  height: 250,
-                  objectFit: "cover",
-                  marginTop: 10,
-                }}
-                borderRadius={10}
-              />
-              <View
-                style={{
-                  height: 80,
-                  width: "100%",
-                  position: "absolute",
-                  bottom: 0,
-                  left: 0,
-                  opacity: 0.9,
-                }}
-              >
-                <LinearGradient
-                  colors={["transparent", "#0000000"]}
-                  style={{ height: 80 }}
-                />
-              </View>
-              <View
-                style={{
-                  position: "absolute",
-                  bottom: 10,
-                  justifyContent: "center",
-                  alignItems: "center",
-                  paddingHorizontal: 50,
-                }}
-              >
-                <TouchableOpacity onPress={handleCreatePost}>
-                  <PlusIcon color={Colors.bgPrimaryDark} />
-                </TouchableOpacity>
-                <Text
-                  style={{
-                    color: Colors.textWhite,
-                    fontSize: 17,
-                    fontWeight: "bold",
-                    marginTop: 10,
-                  }}
-                >
-                  Share your story
-                </Text>
-                <Text
-                  style={{
-                    fontSize: 14,
-                    fontWeight: "400",
-                    marginTop: 10,
-                    textAlign: "center",
-                    color: Colors.textWhite,
-                  }}
-                >
-                  Your story will appear here. Sharing regularly helps you
-                  connect iwth your audience
-                </Text>
-              </View>
-            </View>
-            <View
-              style={[
-                stylesHomePage.card,
-                stylesHomePage.shadowProp,
-                { padding: 10, marginTop: 20 },
-              ]}
-            >
-              <View>
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <InformationCircleIcon />
-                  <Text style={[stylesHomePage.headerText, { marginLeft: 5 }]}>
-                    Insights
-                  </Text>
-                </View>
-                <View style={{ marginTop: 10 }}>
-                  <Text style={{ marginTop: 5, fontSize: 16 }}>Lifetime</Text>
-                </View>
-                <View
-                  style={{
-                    marginTop: 5,
-                    flexDirection: "row",
-                    alignItems: "center",
-                  }}
-                >
-                  <Text style={{ fontSize: 16, fontWeight: "600" }}>501</Text>
-                  <Text style={{ fontSize: 13, marginLeft: 10 }}>
-                    Followers
-                  </Text>
-                </View>
-                <TouchableOpacity
-                  style={{
-                    width: "100%",
-                    height: 44,
-                    borderRadius: 6,
-                    backgroundColor: Colors.primaryColor,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    paddingHorizontal: 10,
-                    paddingVertical: 6,
-                    flexDirection: "row",
-                    marginTop: 10,
-                  }}
-                  onPress={() => navigation.navigate("AudienceScreen")}
-                >
-                  <ArrowLongIcon color={Colors.textWhite} />
-                  <Text
-                    style={{
-                      fontWeight: "700",
-                      marginLeft: 10,
-                      color: Colors.textWhite,
-                    }}
-                  >
-                    Your Audience
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-            <View
-              style={[
-                stylesHomePage.card,
-                stylesHomePage.shadowProp,
-                { padding: 10, marginTop: 20 },
-              ]}
-            >
-              <View>
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <InformationCircleIcon />
-                  <Text style={[stylesHomePage.headerText, { marginLeft: 5 }]}>
-                    Trends
-                  </Text>
-                </View>
-                <View style={{ flexDirection: "row", marginTop: 10 }}>
-                  <Text>Sep 15</Text>
-                  <Text> - Nov 9, 2023</Text>
-                </View>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    marginTop: 10,
-                  }}
-                >
-                  <Text style={{ fontSize: 17, fontWeight: "bold" }}>99</Text>
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      alignItems: "center",
-                      marginHorizontal: 10,
-                    }}
-                  >
-                    <ArrowUpIcon
-                      color={Colors.primaryColor}
-                      width={15}
-                      height={15}
-                    />
-                    <Text style={{ color: Colors.primaryColor, fontSize: 12 }}>
-                      100%
-                    </Text>
-                  </View>
-                  <Text style={{ fontSize: 13 }}>Followers</Text>
-                </View>
-                <TouchableOpacity
-                  style={{
-                    width: "100%",
-                    height: 44,
-                    borderRadius: 6,
-                    backgroundColor: Colors.primaryColor,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    paddingHorizontal: 10,
-                    paddingVertical: 6,
-                    flexDirection: "row",
-                    marginTop: 10,
-                  }}
-                  onPress={() => navigation.navigate("OverviewScreen")}
-                >
-                  <CalendarIcon color={Colors.textWhite} />
-                  <Text
-                    style={{
-                      fontWeight: "700",
-                      color: Colors.textWhite,
-                      marginLeft: 15,
-                    }}
-                  >
-                    Overview
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
+          ></View>
         </View>
+        <View paddingH-20 marginT-20 style={{ position: "relative" }}>
+          <StackedBarChart
+            data={dataBar}
+            width={screenWidth - 10}
+            height={240}
+            yAxisLabel="$"
+            yLabelsOffset={5}
+            chartConfig={barChartConfig}
+            style={{
+              borderRadius: 16,
+              paddingLeft: 10,
+              paddingTop: 10,
+              backgroundColor: Colors.textWhite,
+            }}
+          />
+        </View>
+        <View marginT-20 paddingV-20 backgroundColor={Colors.textWhite}>
+          <Text text60 center>
+            Campaigns
+          </Text>
+          {campaigns.map((item, index) => (
+            <ExtendComponent key={index} {...item} />
+          ))}
+        </View>
+        <View backgroundColor={Colors.textWhite} style={{ height: 60 }} />
       </ScrollView>
     </SafeAreaView>
   );
 }
-
-const style = StyleSheet.create({});
 
 const stylesHomePage = StyleSheet.create({
   container: {
@@ -2355,660 +878,6 @@ const stylesHomePage = StyleSheet.create({
   },
 });
 
-function AudienceScreen({ navigation }) {
-  const [active, setActive] = React.useState(1);
-
-  const onActive = function (state) {
-    setActive(state);
-  };
-
-  const CreateContent = () => {
-    navigation.navigate("CreatePost");
-  };
-
-  return (
-    <SafeAreaView style={stylesHomePage.container}>
-      <View>
-        <CustomHeader
-          showBack
-          titleLeft="Audience"
-          navigation={navigation}
-          right={
-            <TouchableOpacity
-              style={{
-                height: 35,
-                borderRadius: 24,
-                backgroundColor: Colors.primaryColor,
-                justifyContent: "center",
-                alignItems: "center",
-                paddingHorizontal: 10,
-                paddingVertical: 6,
-                flexDirection: "row",
-                marginTop: 10,
-              }}
-              onPress={CreateContent}
-            >
-              <Text
-                style={{
-                  fontWeight: "700",
-                  color: Colors.textWhite,
-                }}
-              >
-                Create Ad
-              </Text>
-            </TouchableOpacity>
-          }
-        />
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-            paddingHorizontal: 20,
-          }}
-        >
-          <TouchableOpacity
-            style={{
-              height: 35,
-              borderRadius: 24,
-              backgroundColor: Colors.bgPrimary,
-              justifyContent: "center",
-              alignItems: "center",
-              paddingHorizontal: 10,
-              paddingVertical: 6,
-              flexDirection: "row",
-              marginTop: 10,
-            }}
-            onPress={CreateContent}
-          >
-            <CalendarIcon color={Colors.textColor} />
-            <Text
-              style={{
-                fontWeight: "700",
-                marginLeft: 10,
-                color: Colors.textColor,
-              }}
-            >
-              Lifetime
-            </Text>
-          </TouchableOpacity>
-          <Text style={{ fontWeight: "600", fontSize: 15 }}>Lifetime</Text>
-        </View>
-        <View style={{ height: 700, padding: 10 }}>
-          <View
-            style={[
-              stylesShadow.card,
-              stylesShadow.shadowProp,
-              {
-                flexDirection: "row",
-                justifyContent: "space-between",
-                padding: 20,
-              },
-            ]}
-          >
-            <View
-              style={{
-                flex: 1,
-              }}
-            >
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  position: "relative",
-                }}
-              >
-                <InformationCircleIcon width={20} />
-                <Text
-                  style={{ fontSize: 15, fontWeight: "bold", marginLeft: 5 }}
-                >
-                  Present-day viewers
-                </Text>
-              </View>
-              <View
-                style={{
-                  marginTop: 5,
-                  flexDirection: "row",
-                  alignItems: "center",
-                }}
-              >
-                <Text style={{ fontSize: 16, fontWeight: "600" }}>501</Text>
-                <Text style={{ fontSize: 13, marginLeft: 10 }}>
-                  Facebook Followers
-                </Text>
-              </View>
-              <TouchableOpacity
-                style={{
-                  position: "absolute",
-                  right: 0,
-                  top: 0,
-                  borderRadius: 6,
-                  justifyContent: "center",
-                  alignItems: "center",
-                  flexDirection: "row",
-                }}
-                onPress={() => navigation.navigate("AudienceScreen")}
-              >
-                <ArrowLongIcon />
-              </TouchableOpacity>
-            </View>
-          </View>
-          <View
-            style={[
-              stylesShadow.card,
-              stylesShadow.shadowProp,
-              {
-                flexDirection: "row",
-                justifyContent: "space-between",
-                padding: 20,
-                marginTop: 20,
-              },
-            ]}
-          >
-            <View
-              style={{
-                flex: 1,
-              }}
-            >
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  position: "relative",
-                }}
-              >
-                <InformationCircleIcon width={20} />
-                <Text
-                  style={{ fontSize: 15, fontWeight: "bold", marginLeft: 5 }}
-                >
-                  Estimated Audience
-                </Text>
-              </View>
-              <View
-                style={{
-                  marginTop: 5,
-                  flexDirection: "row",
-                  alignItems: "center",
-                }}
-              >
-                <Text style={{ fontSize: 16, fontWeight: "bold" }}>20M - </Text>
-                <Text style={{ fontSize: 16, fontWeight: "bold" }}>50M</Text>
-                <Text style={{ fontSize: 13, marginLeft: 10 }}>
-                  Estimated Audience size
-                </Text>
-              </View>
-              <TouchableOpacity
-                style={{
-                  position: "absolute",
-                  right: 0,
-                  top: 0,
-                  borderRadius: 6,
-                  justifyContent: "center",
-                  alignItems: "center",
-                  flexDirection: "row",
-                }}
-                onPress={() => navigation.navigate("AudienceScreen")}
-              >
-                <ArrowLongIcon />
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </View>
-      <View height={100}></View>
-    </SafeAreaView>
-  );
-}
-const stylesShadow = StyleSheet.create({
-  card: {
-    backgroundColor: "white",
-    borderRadius: 8,
-    width: "100%",
-  },
-  shadowProp: {
-    shadowOffset: { width: -2, height: 4 },
-    shadowColor: "#171717",
-    shadowOpacity: 0.2,
-    shadowRadius: 3,
-  },
-});
-
-function ExploreScreen({ navigation }) {
-  return (
-    <SafeAreaView style={stylesHomePage.container}>
-      <View>
-        <CustomHeader showBack titleLeft="Explore" navigation={navigation} />
-        <View style={{ height: 700, paddingHorizontal: 20 }}>
-          <Text style={{ fontSize: 17, fontWeight: "bold" }}>
-            Audience growth
-          </Text>
-          <Text style={{ fontSize: 17, fontWeight: "bold", marginTop: 10 }}>
-            Friends
-          </Text>
-          <Text
-            style={{ fontSize: 13, color: Colors.textColor, marginTop: 10 }}
-          >
-            Invite frineds to follow your page. This will allow App to access
-            the frineds list from your personal account.
-          </Text>
-          <Text style={{ color: Colors.primaryColor }}>Learn more</Text>
-        </View>
-      </View>
-      <View height={100}></View>
-    </SafeAreaView>
-  );
-}
-
-function OverviewScreen({ navigation }) {
-  const [active, setActive] = React.useState(1);
-
-  const onActive = function (state) {
-    setActive(state);
-  };
-
-  const CreateContent = () => {
-    navigation.navigate("CreatePost");
-  };
-
-  return (
-    <SafeAreaView style={stylesHomePage.container}>
-      <View>
-        <CustomHeader
-          showBack
-          titleLeft="Overview"
-          navigation={navigation}
-          right={
-            <TouchableOpacity
-              style={{
-                height: 35,
-                borderRadius: 24,
-                backgroundColor: Colors.primaryColor,
-                justifyContent: "center",
-                alignItems: "center",
-                paddingHorizontal: 10,
-                paddingVertical: 6,
-                flexDirection: "row",
-                marginTop: 10,
-              }}
-              onPress={CreateContent}
-            >
-              <Text
-                style={{
-                  fontWeight: "700",
-                  color: Colors.textWhite,
-                }}
-              >
-                Create Ad
-              </Text>
-            </TouchableOpacity>
-          }
-        />
-
-        <View style={{ height: 700, padding: 10 }}>
-          <Image
-            source={require("./assets/images/chart-1.png")}
-            style={{ width: "100%", height: 420, objectFit: "cover" }}
-          />
-          <View
-            style={{
-              padding: 20,
-            }}
-          >
-            <Text style={{ fontSize: 17, fontWeight: "bold" }}>
-              Expend your reach:
-            </Text>
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <Text
-                style={{
-                  fontSize: 15,
-                  marginTop: 10,
-                }}
-              >
-                Facebook reach:
-              </Text>
-              <Text
-                style={{
-                  fontSize: 15,
-                  color: Colors.successColor,
-                  marginTop: 10,
-                }}
-              >
-                12% - 22%
-              </Text>
-            </View>
-            <TouchableOpacity
-              style={{
-                width: "100%",
-                height: 44,
-                borderRadius: 6,
-                backgroundColor: Colors.bgPrimary,
-                justifyContent: "center",
-                alignItems: "center",
-                paddingHorizontal: 10,
-                paddingVertical: 6,
-                flexDirection: "row",
-                marginTop: 20,
-              }}
-              onPress={() => navigation.navigate("CreatePost")}
-            >
-              <Text
-                style={{
-                  fontWeight: "700",
-                }}
-              >
-                Create Ad
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
-      <View height={100}></View>
-    </SafeAreaView>
-  );
-}
-function ContentScreen({ navigation }) {
-  const [posts, setPosts] = React.useState([]);
-  const [active, setActive] = React.useState(2);
-  const [loading, setLoading] = React.useState(false);
-
-  const onActive = function (state) {
-    setActive(state);
-  };
-
-  const CreateContent = () => {
-    navigation.navigate("CreatePost");
-  };
-
-  React.useEffect(() => {
-    const initData = async () => {
-      setLoading(true);
-      await firebase
-        .firestore()
-        .collection(active === 1 ? "posts" : "planners")
-        .orderBy(active === 1 ? "createdAt" : "date", "desc")
-        .limit(10)
-        .get()
-        .then((querySnapshot) => {
-          console.log(querySnapshot.docs);
-          const data = [];
-          querySnapshot.forEach((doc) => {
-            data.push({ ...doc.data(), docId: doc.id });
-          });
-
-          setPosts(data);
-          setLoading(false);
-        });
-    };
-    initData();
-  }, [active]);
-
-  const stylesActive = {
-    width: "46%",
-    height: 44,
-    borderRadius: 6,
-    backgroundColor: Colors.primaryColor,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    flexDirection: "row",
-    marginTop: 10,
-  };
-
-  const styleDeAtive = {
-    width: "46%",
-    height: 44,
-    borderRadius: 6,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    flexDirection: "row",
-    marginTop: 10,
-  };
-
-  return (
-    <SafeAreaView style={stylesHomePage.container}>
-      <View>
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-            paddingHorizontal: 20,
-          }}
-        >
-          <Text style={{ fontSize: 17, fontWeight: "bold" }}>Content</Text>
-          <TouchableOpacity
-            style={{
-              height: 35,
-              borderRadius: 24,
-              backgroundColor: Colors.primaryColor,
-              justifyContent: "center",
-              alignItems: "center",
-              paddingHorizontal: 10,
-              paddingVertical: 6,
-              flexDirection: "row",
-              marginTop: 10,
-            }}
-            onPress={CreateContent}
-          >
-            <Text
-              style={{
-                fontWeight: "700",
-                color: Colors.textWhite,
-              }}
-            >
-              Create
-            </Text>
-          </TouchableOpacity>
-        </View>
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            padding: 20,
-          }}
-        >
-          <TouchableOpacity
-            style={active === 1 ? stylesActive : styleDeAtive}
-            onPress={() => onActive(1)}
-          >
-            <Text
-              style={
-                active === 1
-                  ? {
-                      fontWeight: "700",
-                      color: Colors.textWhite,
-                    }
-                  : {
-                      fontWeight: "500",
-                      color: Colors.textColor,
-                    }
-              }
-            >
-              Mentions & Tags
-            </Text>
-          </TouchableOpacity>
-          <View style={{ width: "8%" }} />
-          <TouchableOpacity
-            style={active === 2 ? stylesActive : styleDeAtive}
-            onPress={() => onActive(2)}
-          >
-            <Text
-              style={
-                active === 2
-                  ? {
-                      fontWeight: "700",
-                      color: Colors.textWhite,
-                    }
-                  : {
-                      fontWeight: "500",
-                      color: Colors.textColor,
-                    }
-              }
-            >
-              Planners
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-      <View
-        style={{
-          flex: 1,
-          flexGrow: 2,
-          height: "100%",
-        }}
-      >
-        {active === 1 ? (
-          <ListPosts
-            posts={posts}
-            loading={loading}
-            styles={{ paddingHorizontal: 10, paddingBottom: 40 }}
-          />
-        ) : (
-          <Planners
-            data={posts}
-            loading={loading}
-            styles={{ paddingHorizontal: 10, paddingBottom: 40 }}
-          />
-        )}
-      </View>
-      <View height={40}></View>
-    </SafeAreaView>
-  );
-}
-
-function EmptyScreen() {
-  return <View />;
-}
-
-function InboxScreen({ navigation }) {
-  const [posts, setPosts] = React.useState([]);
-  const [active, setActive] = React.useState(2);
-  const [loading, setLoading] = React.useState(false);
-  const onActive = function (state) {
-    setActive(state);
-  };
-
-  const CreateContent = () => {
-    navigation.navigate("CreatePost");
-  };
-
-  React.useEffect(() => {
-    const initData = async () => {
-      setLoading(true);
-      await firebase
-        .firestore()
-        .collection(active === 1 ? "messages" : "comments")
-        .orderBy("timestamp", "desc")
-        .limit(10)
-        .get()
-        .then((querySnapshot) => {
-          console.log(querySnapshot.docs);
-          const data = [];
-          querySnapshot.forEach((doc) => {
-            data.push({ ...doc.data(), docId: doc.id });
-          });
-
-          setPosts(data);
-          setLoading(false);
-        });
-    };
-    initData();
-  }, [active]);
-
-  const stylesActive = {
-    width: 100,
-    height: 35,
-    borderRadius: 24,
-    borderWidth: 2,
-    borderColor: Colors.primaryColor,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    flexDirection: "row",
-    marginTop: 10,
-  };
-
-  const styleDeAtive = {
-    width: 100,
-    height: 35,
-    borderRadius: 6,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    flexDirection: "row",
-    marginTop: 10,
-  };
-
-  return (
-    <SafeAreaView style={stylesHomePage.container}>
-      <View style={{ padding: 20, flex: 1 }}>
-        <View>
-          <Text style={{ fontSize: 17, fontWeight: "bold" }}>Home</Text>
-        </View>
-        <View style={{ flexDirection: "row", marginTop: 10 }}>
-          <TouchableOpacity
-            style={active === 1 ? stylesActive : styleDeAtive}
-            onPress={() => onActive(1)}
-          >
-            <Text
-              style={
-                active === 1
-                  ? {
-                      fontWeight: "700",
-                      color: Colors.primaryColor,
-                    }
-                  : {
-                      fontWeight: "500",
-                      color: Colors.textColor,
-                    }
-              }
-            >
-              Messages
-            </Text>
-          </TouchableOpacity>
-          <View style={{ width: "8%" }} />
-          <TouchableOpacity
-            style={active === 2 ? stylesActive : styleDeAtive}
-            onPress={() => onActive(2)}
-          >
-            <Text
-              style={
-                active === 2
-                  ? {
-                      fontWeight: "700",
-                      color: Colors.primaryColor,
-                    }
-                  : {
-                      fontWeight: "500",
-                      color: Colors.textColor,
-                    }
-              }
-            >
-              Comments
-            </Text>
-          </TouchableOpacity>
-        </View>
-        <View style={{ marginTop: 10 }}>
-          <Text style={{ fontSize: 16, fontWeight: "600" }}>
-            All {active === 1 ? "messages" : "comments"}
-          </Text>
-        </View>
-        {active === 1 ? (
-          <Messages data={posts} loading={loading} styles={{ paddingHorizontal: 10}} />
-        ) : (
-          <Comments data={posts} loading={loading} styles={{ paddingHorizontal: 10 }} />
-        )}
-      </View>
-      <View height={40}></View>
-    </SafeAreaView>
-  );
-}
-
 export const CustomHeader = ({
   title,
   showBack,
@@ -3076,840 +945,6 @@ export const CustomHeader = ({
   );
 };
 
-function NotificationsScreen({ navigation }) {
-  const ref = React.useRef(null);
-  const [notifications, setNotifications] = React.useState([]);
-
-  React.useEffect(() => {
-    const initData = async () => {
-      await firebase
-        .firestore()
-        .collection("notifications")
-        .orderBy("timestamp", "desc")
-        .onSnapshot((querySnapshot) => {
-          const data = [];
-          querySnapshot.forEach((doc) => {
-            data.push({ ...doc.data(), docId: doc.id });
-          });
-          setNotifications(data);
-        });
-    };
-
-    // data.forEach(async (item) => {
-    //   await firebase
-    //   .firestore()
-    //   .collection("comments")
-    //   .add(item)
-    // })
-
-    initData();
-  }, []);
-
-  const handleRemoveNoti = async (docId) => {
-    const result = await firebase
-      .firestore()
-      .collection("notifications")
-      .doc(docId)
-      .delete();
-
-    alert("Deleted Successful");
-  };
-
-  const handleRead = async (docId) => {
-    const result = await firebase
-      .firestore()
-      .collection("notifications")
-      .doc(docId)
-      .update({ readed: true });
-
-    Alert.alert("Notification", "Update Readed");
-  };
-
-  return (
-    <SafeAreaView style={stylesHomePage.container}>
-      <CustomHeader
-        showBack
-        titleLeft="Notifications"
-        navigation={navigation}
-      />
-      <ScrollView style={{ marginTop: 10, paddingHorizontal: 20 }}>
-        {notifications.map((data) => (
-          <TouchableOpacity
-            onPress={() => handleRead(data.docId)}
-            key={data.name}
-            style={[
-              stylesHomePage.card,
-              stylesHomePage.shadowProp,
-              {
-                marginTop: 10,
-                borderBottomWidth: 1,
-                borderColor: Colors.bgSecondaryLight,
-                flexDirection: "row",
-                paddingHorizontal: 10,
-                paddingVertical: 10,
-                alignItems: "center",
-              },
-            ]}
-          >
-            <View style={{ position: "relative", flexGrow: 2 }}>
-              <Text style={{ fontWeight: data?.readed ? "400" : "700" }}>
-                {data.name}
-              </Text>
-              <Text
-                style={{
-                  marginTop: 5,
-                  fontWeight: data?.readed ? "300" : "400",
-                }}
-              >
-                {data.text}
-              </Text>
-              {data.readed ? null : (
-                <View
-                  style={[
-                    stylesHomePage.bage,
-                    {
-                      top: 0,
-                      right: 0,
-                    },
-                  ]}
-                  onPress={() => handleRemoveNoti(data.docId)}
-                />
-              )}
-              <Text
-                style={{
-                  position: "absolute",
-                  right: 0,
-                  bottom: -5,
-                  color: Colors.bgSecondaryLight,
-                }}
-              >
-                {data.time || "an hour ago"}
-              </Text>
-              <View style={{ height: 14 }}></View>
-            </View>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
-    </SafeAreaView>
-  );
-}
-
-function ImageViewer({
-  placeholderImageSource,
-  selectedImage,
-  styles,
-  removeImageByIdx,
-}) {
-  const imageSource = selectedImage
-    ? { uri: selectedImage }
-    : placeholderImageSource;
-
-  return (
-    <View style={{ position: "relative" }}>
-      <Image source={imageSource} style={styles} />
-      <TouchableOpacity
-        style={{
-          position: "absolute",
-          right: 5,
-        }}
-        onPress={removeImageByIdx}
-      >
-        <TimesIcon width={15} />
-      </TouchableOpacity>
-    </View>
-  );
-}
-
-function CameraModal({ modalVisible, setModalVisible, addImage }) {
-  const [type, setType] = useState(CameraType.back);
-  const [permission, requestPermission] = Camera.useCameraPermissions();
-  const [cameraRef, setCameraRef] = useState(null);
-
-  if (!permission) {
-    // Camera permissions are still loading
-    return <View />;
-  }
-
-  if (!permission.granted) {
-    // Camera permissions are not granted yet
-    return (
-      <View style={stylesCamera.container}>
-        <Text style={{ textAlign: "center" }}>Allow camera</Text>
-        <Button onPress={requestPermission} title="grant permission" />
-      </View>
-    );
-  }
-
-  function toggleCameraType() {
-    setType((current) =>
-      current === CameraType.back ? CameraType.front : CameraType.back
-    );
-  }
-
-  async function handeTakeCamera() {
-    if (cameraRef) {
-      const photo = await cameraRef.takePictureAsync();
-      addImage(photo?.uri);
-      setModalVisible(false);
-    }
-  }
-
-  function handleBack() {
-    setModalVisible(false);
-  }
-
-  return (
-    <Modal
-      animationType="slide"
-      visible={modalVisible}
-      onRequestClose={() => {
-        setModalVisible(!modalVisible);
-      }}
-    >
-      <Camera
-        style={stylesCamera.camera}
-        type={type}
-        ref={(ref) => setCameraRef(ref)}
-      >
-        <View style={stylesCamera.header}>
-          <TouchableOpacity
-            onPress={handleBack}
-            style={{
-              width: 40,
-              height: 40,
-              borderRadius: 999,
-              justifyContent: "center",
-              alignItems: "center",
-              backgroundColor: "#000000",
-              opacity: 0.3,
-            }}
-          >
-            <ChevronLeftIcon color={Colors.textWhite} />
-          </TouchableOpacity>
-        </View>
-        <View style={stylesCamera.buttonContainer}>
-          <TouchableOpacity
-            style={{ position: "absolute", left: 0, padding: 15 }}
-            onPress={toggleCameraType}
-          >
-            <ArrowPathIcon color={Colors.textWhite} width={30} height={30} />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={{
-              backgroundColor: "#0000004a",
-              padding: 15,
-              borderRadius: 12,
-            }}
-            onPress={handeTakeCamera}
-          >
-            <TakeCamera color={Colors.textWhite} width={30} height={30} />
-          </TouchableOpacity>
-        </View>
-      </Camera>
-    </Modal>
-  );
-}
-
-const stylesCamera = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-  },
-  camera: {
-    flex: 1,
-    position: "relative",
-  },
-  header: {
-    position: "absolute",
-    left: 20,
-    top: 40,
-  },
-  buttonContainer: {
-    flex: 1,
-    flexDirection: "row",
-    backgroundColor: "transparent",
-    margin: 64,
-    position: "relative",
-    justifyContent: "center",
-    alignItems: "flex-end",
-  },
-  button: {},
-  text: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "white",
-  },
-});
-
-const CreatePost = ({ navigation }) => {
-  const [loading, setLoading] = React.useState(false);
-  const [text, setText] = React.useState("");
-  const [imageList, setImageList] = React.useState([]);
-  const [modalVisible, setModalVisible] = useState(false);
-
-  const goToHome = () => {
-    navigation.navigate("HomeScreen");
-  };
-
-  const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsMultipleSelection: true,
-    });
-    if (!result.canceled) {
-      setImageList(result.assets.map((item) => item.uri));
-    }
-  };
-
-  const removeImageByIdx = (idx) => {
-    console.log(imageList);
-    const list = [...imageList];
-    list.splice(idx, 1);
-
-    setImageList(list);
-  };
-
-  const addImage = (newUri) => {
-    console.log("newUri", newUri);
-    setImageList([...imageList, newUri]);
-  };
-
-  const onChangeText = (txt) => {
-    setText(txt);
-  };
-
-  const [showToast, setShowToast] = useState(false);
-
-  const showToastMessage = () => {
-    showToast(setShowToast);
-  };
-
-  const renderToast = () => {
-    if (showToast) {
-      return (
-        <View
-          style={{
-            position: "absolute",
-            bottom: 20,
-            left: "50%",
-            transform: [{ translateX: -50 }],
-            backgroundColor: "green",
-            padding: 10,
-            borderRadius: 5,
-          }}
-        >
-          <Text style={{ color: "white" }}>Success!</Text>
-        </View>
-      );
-    }
-    return null;
-  };
-
-  const handleCreatePost = async () => {
-    await firebase
-      .firestore()
-      .collection("posts")
-      .add({
-        name: "John Doe",
-        text: text,
-        liked: 0,
-        comments: 0,
-        shared: 0,
-        booked: 0,
-        createdAt: new Date().getTime(),
-      })
-      .then((result) => {
-        Alert.alert("Notification", "Created post successfully", [
-          {
-            text: "New",
-            onPress: () => {
-              setImageList([]);
-              setText("");
-            },
-            style: "cancel",
-          },
-          {
-            text: "Home",
-            onPress: () => {
-              setImageList([]);
-              setText("");
-              goToHome();
-            },
-            style: "default",
-          },
-        ]);
-      });
-  };
-
-  return (
-    <SafeAreaView style={stylesHomePage.container}>
-      <CustomHeader
-        showBack
-        titleLeft="Create Post"
-        navigation={navigation}
-        right={
-          <PaperAirplaneIcon
-            onPress={handleCreatePost}
-            color={Colors.primaryColor}
-          />
-        }
-      />
-      <CameraModal
-        modalVisible={modalVisible}
-        setModalVisible={setModalVisible}
-        addImage={addImage}
-      />
-      <ScrollView style={{ flex: 1 }}>
-        <View
-          style={{
-            alignItems: "center",
-            flexDirection: "row",
-            borderColor: Colors.bgSecondaryLight,
-            borderWidth: 1,
-            padding: 10,
-            marginHorizontal: 20,
-            borderRadius: 24,
-          }}
-        >
-          <Image
-            source={require("./assets/images/image-1.jpg")}
-            full
-            style={{
-              width: 40,
-              height: 40,
-              borderRadius: 100,
-              borderColor: "#fff",
-              borderWidth: 2,
-            }}
-          />
-          <View style={{ marginLeft: 5, flex: 1 }}>
-            <Text style={{ fontSize: 17, fontWeight: "600" }}>John Done</Text>
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                marginTop: 5,
-              }}
-            >
-              <View
-                style={{
-                  backgroundColor: Colors.primaryColor,
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  width: 70,
-                  borderRadius: 24,
-                }}
-              >
-                <PublicIcon width={18} color={Colors.textWhite} />
-                <Text
-                  style={{
-                    color: Colors.textWhite,
-                    marginLeft: 5,
-                    fontSize: 12,
-                  }}
-                >
-                  Public
-                </Text>
-              </View>
-              <View
-                style={{
-                  backgroundColor: Colors.primaryColor,
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  width: 70,
-                  borderRadius: 24,
-                  marginLeft: 10,
-                }}
-              >
-                <PlusOutlineIcon width={18} color={Colors.textWhite} />
-                <Text
-                  style={{
-                    color: Colors.textWhite,
-                    marginLeft: 2,
-                    fontSize: 12,
-                  }}
-                >
-                  Album
-                </Text>
-              </View>
-            </View>
-          </View>
-        </View>
-        <View style={{ marginTop: 10 }}>
-          <TouchableWithoutFeedback
-            onPress={Keyboard.dismiss}
-            accessible={false}
-          >
-            <TextInput
-              value={text}
-              onChangeText={(text) => onChangeText(text)}
-              returnKeyType="done"
-              rows={4}
-              multiline={true}
-              placeholder="Share your content"
-              style={{
-                padding: 20,
-                fontSize: 17,
-                height: 150,
-              }}
-            />
-          </TouchableWithoutFeedback>
-        </View>
-        <View style={{ flexDirection: "row", padding: 20 }}>
-          <ScrollView horizontal>
-            {imageList?.map((image, key) => (
-              <ImageViewer
-                key={key}
-                selectedImage={image}
-                removeImageByIdx={() => removeImageByIdx(key)}
-                styles={{
-                  width: 100,
-                  height: 180,
-                  borderWidth: 1,
-                  borderColor: Colors.bgSecondaryLight,
-                  borderRadius: 12,
-                  marginRight: 2,
-                }}
-              />
-            ))}
-          </ScrollView>
-        </View>
-        <View style={{ justifyContent: "space-evenly", flexDirection: "row" }}>
-          <TouchableOpacity style={stylesNewPost} onPress={pickImage}>
-            <PhotoIcon color={Colors.successColor} />
-            <View style={{ height: 5 }} />
-            <Text style={{ marginTop: 10, color: Colors.textColor }}>
-              Photo/Video
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            center
-            style={stylesNewPost}
-            onPress={() => setModalVisible(true)}
-          >
-            <CameraIcon color="#6600cc" />
-            <Text style={{ marginTop: 10, color: Colors.textColor }}>
-              Camera
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={stylesNewPost}
-            onPress={() => setModalVisible(true)}
-          >
-            <VideoCameraIcon color={Colors.dangerColor} />
-            <Text style={{ marginTop: 10, color: Colors.textColor }}>
-              Live video
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
-      <View
-        style={{
-          justifyContent: "flex-end",
-          padding: 20,
-        }}
-      >
-        <TouchableOpacity
-          style={{
-            width: "100%",
-            height: 44,
-            borderRadius: 6,
-            backgroundColor: Colors.primaryColor,
-            justifyContent: "center",
-            alignItems: "center",
-            paddingHorizontal: 10,
-            paddingVertical: 6,
-            flexDirection: "row",
-            marginTop: 10,
-          }}
-          onPress={handleCreatePost}
-        >
-          <Text
-            style={{
-              fontWeight: "700",
-              color: Colors.textWhite,
-              marginRight: 10,
-            }}
-          >
-            Post
-          </Text>
-          <PaperAirplaneIcon color={Colors.textWhite} />
-        </TouchableOpacity>
-      </View>
-    </SafeAreaView>
-  );
-};
-
-const stylesNewPost = StyleSheet.create({
-  borderRadius: 10,
-  backgroundColor: "#f2f2f2de",
-  padding: 15,
-  width: "30%",
-  justifyContent: "ceneter",
-  alignItems: "center",
-  shadowOffset: { width: 0, height: 2 },
-  shadowColor: "#cccccc",
-  shadowOpacity: 0.3,
-  shadowRadius: 12,
-});
-
-function SettingsScreen({ navigation }) {
-  const [avatar, setAvatar] = React.useState("");
-  const [name, setName] = React.useState("");
-  const [planner, setPlanner] = React.useState("");
-  const [darkMode, setDarkMode] = React.useState(false);
-  const [showAds, setShowAds] = React.useState(true);
-  const [enableNotifications, setEnableNotifications] = React.useState(true);
-
-  const handleSaveChanges = () => {
-    // Handle saving changes to the server or local storage
-    console.log("Changes saved:", {
-      avatar,
-      name,
-      planner,
-      darkMode,
-      showAds,
-      enableNotifications,
-    });
-  };
-
-  const handleAvatarChange = (image) => {
-    setAvatar(image.uri);
-  };
-
-  function handleGoNotifications() {
-    navigation.navigate("Notifications");
-  }
-
-  return (
-    <SafeAreaView style={stylesHomePage.container}>
-      <View style={{ padding: 20 }}>
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
-          <Text style={{ fontSize: 17, fontWeight: "bold" }}>Menu</Text>
-          <TouchableOpacity
-            style={{
-              width: 40,
-              height: 40,
-              borderRadius: 999,
-              justifyContent: "center",
-              alignItems: "center",
-              paddingHorizontal: 10,
-              paddingVertical: 6,
-              flexDirection: "row",
-              backgroundColor: "#f2f2f2",
-            }}
-            onPress={() => navigation.navigate("HomeScreen")}
-          >
-            <MagnifyingGlassIcon color={Colors.textColor} />
-          </TouchableOpacity>
-        </View>
-        <View
-          style={{
-            marginTop: 20,
-            alignItems: "center",
-            flexDirection: "row",
-            backgroundColor: Colors.primaryColor,
-            borderRadius: 12,
-            padding: 15,
-          }}
-        >
-          <Image
-            source={require("./assets/images/image-1.jpg")}
-            full
-            style={{
-              width: 50,
-              height: 50,
-              borderRadius: 100,
-              borderColor: "#fff",
-              borderWidth: 2,
-            }}
-          />
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "center",
-              flex: 1,
-            }}
-          >
-            <View style={{ marginLeft: 10 }}>
-              <Text style={{ fontSize: 17, fontWeight: "bold", color: Colors.textWhite }}>
-                John Done
-              </Text>
-              <Text style={{ marginTop: 5, fontSize: 12, color: Colors.textWhite }}>
-                Software Engineer
-              </Text>
-            </View>
-            <View>
-              <TouchableOpacity>
-                <ArrowPathIcon color={Colors.primaryColor} />
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-        <View style={{ marginTop: 20 }}>
-          <TouchableOpacity
-            style={{
-              width: "100%",
-              borderRadius: 12,
-              height: 50,
-              justifyContent: "center",
-              alignItems: "center",
-              paddingHorizontal: 10,
-              paddingVertical: 6,
-              flexDirection: "row",
-              backgroundColor: "#f6f7f8",
-              marginTop: 10,
-            }}
-            onPress={handleGoNotifications}
-          >
-            <View
-              style={{
-                width: "100%",
-                flexDirection: "row",
-                justifyContent: "space-between",
-                padding: 10,
-                alignItems: "center",
-              }}
-            >
-              <Text color={Colors.textColor}>Notifications</Text>
-              <ChevronRightIcon color="#cccccc" />
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={{
-              width: "100%",
-              borderRadius: 12,
-              height: 50,
-              justifyContent: "center",
-              alignItems: "center",
-              paddingHorizontal: 10,
-              paddingVertical: 6,
-              flexDirection: "row",
-              backgroundColor: "#f6f7f8",
-              marginTop: 10,
-            }}
-            onPress={() => navigation.navigate("ContentScreen")}
-          >
-            <View
-              style={{
-                width: "100%",
-                flexDirection: "row",
-                justifyContent: "space-between",
-                padding: 10,
-                alignItems: "center",
-              }}
-            >
-              <Text color={Colors.textColor}>Mentions & Tag - Planners</Text>
-              <ChevronRightIcon color="#cccccc" />
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={{
-              width: "100%",
-              borderRadius: 12,
-              height: 50,
-              justifyContent: "center",
-              alignItems: "center",
-              paddingHorizontal: 10,
-              paddingVertical: 6,
-              flexDirection: "row",
-              backgroundColor: "#f6f7f8",
-              marginTop: 10,
-            }}
-            onPress={() => navigation.navigate("InboxScreen")}
-          >
-            <View
-              style={{
-                width: "100%",
-                flexDirection: "row",
-                justifyContent: "space-between",
-                padding: 10,
-                alignItems: "center",
-              }}
-            >
-              <Text color={Colors.textColor}>Messages - Comments</Text>
-              <ChevronRightIcon color="#cccccc" />
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={{
-              width: "100%",
-              borderRadius: 12,
-              height: 50,
-              justifyContent: "center",
-              alignItems: "center",
-              paddingHorizontal: 10,
-              paddingVertical: 6,
-              flexDirection: "row",
-              backgroundColor: "#f6f7f8",
-              marginTop: 10,
-            }}
-            onPress={() => navigation.navigate("HOmeScreen")}
-          >
-            <View
-              style={{
-                width: "100%",
-                flexDirection: "row",
-                justifyContent: "space-between",
-                padding: 10,
-                alignItems: "center",
-              }}
-            >
-              <Text color={Colors.textColor}>Home</Text>
-              <ChevronRightIcon color="#cccccc" />
-            </View>
-          </TouchableOpacity>
-        </View>
-        {/* <View style={{ marginTop: 20 }}>
-          <View style={stylesProfile.switchContainer}>
-            <Text style={{ fontWeight: "600" }}>Dark Mode</Text>
-            <Switch
-              onColor={Colors.$textGeneral}
-              value={darkMode}
-              onValueChange={() => setDarkMode(!darkMode)}
-            />
-          </View>
-
-          <View style={stylesProfile.switchContainer}>
-            <Text style={{ fontWeight: "600" }}>Show Ads</Text>
-            <Switch
-              onColor={Colors.$textGeneral}
-              value={showAds}
-              onValueChange={() => setShowAds(!showAds)}
-            />
-          </View>
-
-          <View style={stylesProfile.switchContainer}>
-            <Text style={{ fontWeight: "600" }}>Enable Notifications</Text>
-            <Switch
-              onColor={Colors.$textGeneral}
-              value={enableNotifications}
-              onValueChange={() => setEnableNotifications(!enableNotifications)}
-            />
-          </View>
-        </View> */}
-      </View>
-    </SafeAreaView>
-  );
-}
-const stylesProfile = StyleSheet.create({
-  switchContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: 10,
-  },
-});
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 const TabBarPlusButton = ({ navigation }) => {
@@ -3954,9 +989,711 @@ const TabBarPlusButton = ({ navigation }) => {
   );
 };
 
+const CampaignPerformanceForm = ({ navigation }) => {
+  const [campaignName, setCampaignName] = useState("Campaign");
+  const screenWidth = Dimensions.get("window").width;
+  const width50Per = Dimensions.get("window").width / 2;
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const chartConfig = {
+    backgroundColor: Colors.textWhite,
+    backgroundGradientFrom: Colors.textWhite,
+    backgroundGradientTo: Colors.textWhite,
+    decimalPlaces: 2,
+    color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+    style: {
+      borderRadius: 16,
+    },
+  };
+
+  const handleSave = () => {
+    // Save the campaign performance data to the server
+  };
+
+  const data = {
+    labels: ["January", "February", "March", "April", "May", "June"],
+    datasets: [
+      {
+        data: [20, 45, 28, 80, 99, 43],
+        color: (opacity = 1) => Colors.primaryColor, // optional
+        strokeWidth: 2, // optional
+      },
+      {
+        data: [14, 33, 11, 42, 33, 99],
+        color: (opacity = 1) => Colors.$outlineDanger, // optional
+        strokeWidth: 2, // optional
+      },
+    ],
+    legend: ["Black Friday", "123"], // optional
+  };
+
+  const campaigns = [
+    {
+      label: "Campaign",
+      value: "Campaign",
+    },
+    {
+      label: "Campaign 2",
+      value: "Campaign 2",
+    },
+  ];
+
+  return (
+    <SafeAreaView style={stylesCompaign.container}>
+      <View
+        row
+        centerV
+        spread
+        paddingH-20
+        paddingV-10
+        backgroundColor={Colors.primaryColor}
+      >
+        <Text text60BO color={Colors.textWhite}>
+          Campaign Performance
+        </Text>
+        <TouchableOpacity onPress={() => navigation.navigate("SettingScreen")}>
+          <AdjustmentIcon width={30} height={30} color={Colors.textWhite} />
+        </TouchableOpacity>
+      </View>
+      <View
+        padding-10
+        margin-20
+        borderRadius={12}
+        backgroundColor={Colors.textWhite}
+      >
+        <Text style={stylesCompaign.header} marginB-10>
+          Enter Campaign
+        </Text>
+        <View borderColor="#ccc" borderWidth borderRadius={6} padding-10>
+          <TouchableOpacity
+            style={{ height: 30 }}
+            onPress={() => setModalVisible(true)}
+          >
+            <Text color={"#ccc"}>{campaignName || "Select here"}</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+      <View marginH-20 row centerV spread>
+        <View
+          padding-10
+          borderRadius={12}
+          backgroundColor={Colors.textWhite}
+          width={width50Per - 30}
+          height={80}
+          spread
+        >
+          <Text text80R marginB-10>
+            This Week
+          </Text>
+          <Text text60 color={Colors.textColor}>
+            $940.23
+          </Text>
+        </View>
+        <View
+          padding-10
+          borderRadius={12}
+          backgroundColor={Colors.textWhite}
+          width={width50Per - 30}
+          height={80}
+          spread
+        >
+          <Text text80R marginB-10>
+            Past Month
+          </Text>
+          <Text text60 color={Colors.textColor}>
+            $2123.34
+          </Text>
+        </View>
+      </View>
+      <View marginH-20 row centerV spread marginT-20>
+        <View
+          padding-10
+          borderRadius={12}
+          backgroundColor={Colors.textWhite}
+          width={width50Per - 30}
+          height={80}
+          spread
+        >
+          <Text text80R marginB-10>
+            This 3 Week
+          </Text>
+          <Text text60 color={Colors.textColor}>
+            $1581.23
+          </Text>
+        </View>
+        <View
+          padding-10
+          borderRadius={12}
+          backgroundColor={Colors.textWhite}
+          width={width50Per - 30}
+          height={80}
+          spread
+        >
+          <Text text80R marginB-10>
+            This Year
+          </Text>
+          <Text text60 color={Colors.textColor}>
+            $29133.23
+          </Text>
+        </View>
+      </View>
+      <View marginH-20 row centerV spread marginT-20>
+        <LineChart
+          data={data}
+          width={screenWidth - 40}
+          height={300}
+          verticalLabelRotation={30}
+          backgroundColor={Colors.textWhite}
+          chartConfig={chartConfig}
+          style={{
+            borderRadius: 12,
+          }}
+          bezier
+        />
+      </View>
+      <ModalPicker
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        showCancel={false}
+        selectedValue={campaignName}
+        onValueChange={(itemValue, itemIndex) =>
+          setCampaignName((prv) => itemValue)
+        }
+        items={campaigns}
+      />
+    </SafeAreaView>
+  );
+};
+
+const CommonPicker = ({ selectedValue, onValueChange, items }) => {
+  return (
+    <Picker selectedValue={selectedValue} onValueChange={onValueChange}>
+      {items.map((item, index) => (
+        <Picker.Item key={index} label={item.label} value={item.value} />
+      ))}
+    </Picker>
+  );
+};
+
+const ModalPicker = ({
+  selectedValue,
+  onValueChange,
+  items,
+  visible,
+  onClose,
+  showCancel = true,
+  showConfirm = true,
+}) => {
+  return (
+    <Modal
+      visible={visible}
+      animationType="slide"
+      transparent={true}
+      onRequestClose={onClose}
+      onDismiss={onClose}
+    >
+      <View style={stylesModal.modalContainer}>
+        <View style={stylesModal.modalContent}>
+          <TouchableOpacity
+            style={{ position: "absolute", right: 5, top: 5 }}
+            onPress={onClose}
+          >
+            <TimesIcon width={25} height={25} color={Colors.textBlack} />
+          </TouchableOpacity>
+          {/* CommonPicker inside the modal */}
+          <CommonPicker
+            selectedValue={selectedValue}
+            onValueChange={onValueChange}
+            items={items}
+          />
+          <View row style={{ justifyContent: "flex-end" }}>
+            {showCancel ? (
+              <TouchableOpacity
+                style={{
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: 80,
+                  backgroundColor: Colors.$textDisabled,
+                  height: 40,
+                  borderRadius: 12,
+                  marginRight: 12,
+                }}
+                onPress={onClose}
+              >
+                <Text color={Colors.textWhite} text80BO>
+                  Cancel
+                </Text>
+              </TouchableOpacity>
+            ) : null}
+            {showConfirm ? (
+              <TouchableOpacity
+                style={{
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: 80,
+                  backgroundColor: Colors.primaryColor,
+                  height: 40,
+                  borderRadius: 12,
+                }}
+                onPress={onClose}
+              >
+                <Text color={Colors.textWhite} text80BO>
+                  Confirm
+                </Text>
+              </TouchableOpacity>
+            ) : null}
+          </View>
+        </View>
+      </View>
+    </Modal>
+  );
+};
+
+const stylesModal = StyleSheet.create({
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContent: {
+    backgroundColor: "white",
+    padding: 20,
+    borderRadius: 10,
+    width: "80%",
+  },
+});
+
+const CreateCampaign = ({ navigation }) => {
+  const [campaignName, setCampaignName] = useState("");
+  const [projectBudget, setProjectBudget] = useState("");
+  const [typeAds, setTypeAds] = useState("");
+  const [description, setDescription] = useState(0);
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date());
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const addCampaign = () => {
+    addDocument("campaigns", {
+      campaign_name: campaignName,
+      project_budget: projectBudget,
+      type_ads: typeAds,
+      description: description,
+      start_date: startDate.getTime(),
+      end_date: endDate.getTime(),
+      spent: `$${(Math.random() * 100000).toFixed(2)}`,
+      clicks: Math.floor(Math.random() * 200000),
+      conversion_rate: parseFloat((Math.random() * 0.1).toFixed(2)),
+      views: Math.floor(Math.random() * 5000000),
+      cpc: parseFloat((Math.random() * 1).toFixed(2)),
+      createdAt: new Date().getTime(),
+    });
+    Alert.alert("Alert", "Success");
+  };
+
+  const handleSave = () => {
+    if (campaignName === "") {
+      Alert.alert("Alert", "Please enter campaign name");
+    } else if (projectBudget === "") {
+      Alert.alert("Alert", "Please enter project budget");
+    } else if (typeAds === "") {
+      Alert.alert("Alert", "Please enter type ads");
+    } else if (description === "") {
+      Alert.alert("Alert", "Please enter description");
+    } else {
+      Alert.alert("Confirm", "Add Campaign", [
+        {
+          text: "Cancel",
+          onPress: handleClear,
+          style: "cancel",
+        },
+        { text: "OK", onPress: addCampaign },
+      ]);
+    }
+  };
+
+  const handleClear = () => {
+    setCampaignName("");
+    setProjectBudget("");
+    setTypeAds("");
+    setDescription("");
+    setStartDate(new Date());
+    setEndDate(new Date());
+  };
+
+  const pickerItems = [
+    { label: "Select here", value: "Select here" },
+    { label: "Java", value: "Java" },
+    { label: "JavaScript", value: "JavaScript" },
+  ];
+
+  return (
+    <SafeAreaView style={stylesCompaign.container}>
+      <ScrollView>
+        <View
+          row
+          centerV
+          spread
+          paddingH-20
+          paddingV-10
+          backgroundColor={Colors.primaryColor}
+        >
+          <Text text60BO color={Colors.textWhite}>
+            Create Campaign
+          </Text>
+          <TouchableOpacity
+            onPress={() => navigation.navigate("SettingScreen")}
+          >
+            <AdjustmentIcon width={30} height={30} color={Colors.textWhite} />
+          </TouchableOpacity>
+        </View>
+        <View
+          padding-10
+          marginH-20
+          marginT-20
+          borderRadius={12}
+          backgroundColor={Colors.textWhite}
+        >
+          <Text style={stylesCompaign.header} marginB-10>
+            Name Campaign
+          </Text>
+          <TextInput
+            style={stylesCompaign.input}
+            placeholder="Campaign name"
+            placeholderTextColor={Colors.$textDisabled}
+            value={campaignName}
+            onChangeText={setCampaignName}
+          />
+        </View>
+        <View
+          padding-10
+          margin-20
+          marginT-20
+          borderRadius={12}
+          backgroundColor={Colors.textWhite}
+          row
+          centerV
+        >
+          <Text text70BO style={{ flex: 0.3 }}>
+            Type Ads
+          </Text>
+          <View
+            borderColor="#ccc"
+            borderWidth
+            borderRadius={6}
+            style={{ flex: 0.7 }}
+            padding-10
+          >
+            <TouchableOpacity onPress={() => setModalVisible(true)}>
+              <Text color={"#ccc"}>{typeAds || "Select here"}</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+        <View
+          padding-10
+          marginH-20
+          borderRadius={12}
+          backgroundColor={Colors.textWhite}
+        >
+          <Text text70BO marginB-10>
+            Project Budget
+          </Text>
+          <TextInput
+            style={stylesCompaign.input}
+            placeholder="Project budget"
+            placeholderTextColor={Colors.$textDisabled}
+            value={projectBudget}
+            onChangeText={setProjectBudget}
+          />
+        </View>
+        <View
+          padding-10
+          marginH-20
+          marginT-20
+          borderRadius={12}
+          backgroundColor={Colors.textWhite}
+          row
+          spread
+        >
+          <View>
+            <Text text70BO marginB-10>
+              Start date
+            </Text>
+            <RNDateTimePicker
+              onChange={(e, d) => setStartDate(d)}
+              style={{ marginLeft: 10 }}
+              value={startDate}
+            />
+          </View>
+          <View
+            style={{
+              height: "100%",
+              backgroundColor: Colors.$outlineDisabled,
+              width: 1,
+            }}
+          />
+          <View>
+            <Text text70BO marginB-10>
+              End date
+            </Text>
+            <RNDateTimePicker
+              onChange={(e, d) => setEndDate(d)}
+              style={{ marginLeft: 10 }}
+              value={endDate}
+            />
+          </View>
+        </View>
+        <View
+          padding-10
+          marginH-20
+          marginT-20
+          borderRadius={12}
+          backgroundColor={Colors.textWhite}
+        >
+          <Text text70BO marginB-10>
+            Campaign Description
+          </Text>
+          <TextInput
+            multiline
+            style={[stylesCompaign.input, { height: 100 }]}
+            placeholder="Campaign Description"
+            placeholderTextColor={Colors.$textDisabled}
+            value={description}
+            onChangeText={setDescription}
+          />
+        </View>
+        <View padding-10 marginH-20 marginT-20 row spread>
+          <TouchableOpacity
+            style={{
+              alignItems: "center",
+              justifyContent: "center",
+              width: 120,
+              backgroundColor: Colors.$textDisabled,
+              height: 50,
+              borderRadius: 12,
+              marginRight: 12,
+            }}
+            onPress={handleClear}
+          >
+            <Text color={Colors.textWhite} text80BO>
+              Cancel
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              alignItems: "center",
+              justifyContent: "center",
+              width: 180,
+              backgroundColor: Colors.primaryColor,
+              height: 50,
+              borderRadius: 12,
+            }}
+            onPress={handleSave}
+          >
+            <Text color={Colors.textWhite} text80BO>
+              Save
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+      <ModalPicker
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        showCancel={false}
+        selectedValue={typeAds}
+        onValueChange={(itemValue, itemIndex) => setTypeAds(itemValue)}
+        items={pickerItems}
+      />
+    </SafeAreaView>
+  );
+};
+
+const stylesCompaign = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 10,
+    paddingHorizontal: 20,
+  },
+  header: {
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  input: {
+    height: 40,
+    borderColor: "#ccc",
+    borderWidth: 1,
+    borderRadius: 5,
+    padding: 10,
+  },
+  row: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginVertical: 10,
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  buttons: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  button: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#fff",
+    backgroundColor: "#000",
+    padding: 10,
+    borderRadius: 5,
+  },
+});
+
+function SettingScreen({ navigation }) {
+  const dataCampaign = [
+    {
+      campaign_name: "Black Friday Deals",
+      spent: "$50000",
+      clicks: 100000,
+      conversion_rate: 0.02,
+      views: 2500000,
+      cpc: 0.25,
+      createdAt: new Date().getTime(),
+    },
+    {
+      campaign_name: "Cyber Monday Deals",
+      spent: "$75000",
+      clicks: 150000,
+      conversion_rate: 0.03,
+      views: 3750000,
+      cpc: 0.5,
+      createdAt: new Date().getTime() - 13312,
+    },
+    {
+      campaign_name: "Back to School Deals",
+      spent: "$100000",
+      clicks: 200000,
+      conversion_rate: 0.04,
+      views: 5000000,
+      cpc: 0.5,
+      createdAt: new Date().getTime() - 61312,
+    },
+  ];
+
+  function generateData() {
+    console.log("Generating data...");
+
+    dataCampaign.forEach((item) => {
+      addDocument("campaigns", item);
+    });
+    console.log("Finish generate data...");
+  }
+
+  return (
+    <SafeAreaView style={{ flex: 1 }}>
+      <View
+        row
+        centerV
+        spread
+        paddingH-20
+        paddingV-10
+        backgroundColor={Colors.primaryColor}
+      >
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <ChevronLeftIcon width={30} height={30} color={Colors.textWhite} />
+        </TouchableOpacity>
+        <Text text60BO color={Colors.textWhite}>
+          Settings
+        </Text>
+        <View />
+      </View>
+      <View
+        row
+        spread
+        centerV
+        backgroundColor={Colors.textWhite}
+        margin-20
+        padding-10
+        height={50}
+        borderRadius={12}
+      >
+        <Text text70 color={Colors.$iconDanger}>
+          Currency Format
+        </Text>
+        <View row>
+          <Text text70M marginR-10 color={Colors.$iconDanger}>
+            USD
+          </Text>
+          <USDIcon color={Colors.$iconDanger} />
+        </View>
+      </View>
+      {/* <View
+        row
+        spread
+        centerV
+        backgroundColor={Colors.textWhite}
+        margin-20
+        marginT-0
+        padding-10
+        height={50}
+        borderRadius={12}
+      >
+        <Text text70 color={Colors.$iconSuccess}>
+          Generate Data
+        </Text>
+        <View row>
+          <TouchableOpacity onPress={generateData}>
+            <PlusIcon color={Colors.$iconSuccess} />
+          </TouchableOpacity>
+        </View>
+      </View> */}
+      <View
+        row
+        spread
+        centerV
+        backgroundColor={Colors.textWhite}
+        margin-20
+        marginT-0
+        padding-10
+        height={50}
+        borderRadius={12}
+      >
+        <Text text70 color={Colors.$outlineWarning}>
+          Clear Data
+        </Text>
+        <View row>
+          <TouchableOpacity>
+            <TrashIcon color={Colors.$outlineWarning} />
+          </TouchableOpacity>
+        </View>
+      </View>
+      <View
+        row
+        spread
+        centerV
+        backgroundColor={Colors.textWhite}
+        margin-20
+        marginT-0
+        padding-10
+        height={50}
+        borderRadius={12}
+      >
+        <Text text70 color={Colors.$textGeneral}>
+          Version
+        </Text>
+        <View row>
+          <Text text70M marginR-10 color={Colors.$textGeneral}>
+            1.1.0
+          </Text>
+          <RooketIcon color={Colors.$textGeneral} />
+        </View>
+      </View>
+    </SafeAreaView>
+  );
+}
 function TabScreen() {
   return (
-    <Tab.Navigator>
+    <Tab.Navigator initialRouteName="HomeScreen">
       <Tab.Screen
         options={{
           gestureEnabled: false,
@@ -3964,37 +1701,22 @@ function TabScreen() {
           tabBarShowLabel: false,
           tabBarStyle: {
             position: "absolute",
-            shadowColor: "#fff",
-            shadowOffset: {
-              width: 0,
-              height: 10,
-            },
-            shadowOpacity: 0,
-            shadowRadius: 3.5,
-            elevation: 0,
+            backgroundColor: Colors.primaryColor,
+            borderRadius: 999,
+            marginHorizontal: 20,
             height: 80,
-            bottom: 0,
-            paddingTop: 10,
+            bottom: 15,
+            paddingTop: 20,
           },
           tabBarIcon: ({ focused }) => (
             <View style={{ justifyContent: "center", alignItems: "center" }}>
-              <Image
-                source={require("./assets/images/image-1.jpg")}
-                full
-                style={{
-                  width: 30,
-                  height: 30,
-                  borderRadius: 100,
-                  borderColor: "#fff",
-                  borderWidth: 2,
-                }}
-              />
+              <MoneyIcon color={Colors.textWhite} width={30} height={30} />
               <Text
                 style={{
-                  color: focused ? Colors.primaryColor : Colors.textColor,
+                  color: Colors.textWhite,
                 }}
               >
-                Home
+                Budget
               </Text>
             </View>
           ),
@@ -4009,45 +1731,32 @@ function TabScreen() {
           tabBarShowLabel: false,
           tabBarStyle: {
             position: "absolute",
-            shadowColor: "#fff",
-            shadowOffset: {
-              width: 0,
-              height: 10,
-            },
-            shadowOpacity: 0,
-            shadowRadius: 3.5,
-            elevation: 0,
+            backgroundColor: Colors.primaryColor,
+            borderRadius: 999,
+            marginHorizontal: 20,
             height: 80,
-            bottom: 0,
-            paddingTop: 10,
+            bottom: 15,
+            paddingTop: 20,
           },
           tabBarIcon: ({ focused }) => (
             <View style={{ justifyContent: "center", alignItems: "center" }}>
-              <NewsIcon
-                size={28}
-                color={focused ? Colors.primaryColor : Colors.textColor}
+              <PresentationChartBarIcon
+                color={Colors.textWhite}
+                width={30}
+                height={30}
               />
               <Text
                 style={{
-                  color: focused ? Colors.primaryColor : Colors.textColor,
+                  color: Colors.textWhite,
                 }}
               >
-                Content
+                Performance
               </Text>
             </View>
           ),
         }}
-        name="ContentScreen"
-        component={ContentScreen}
-      />
-      <Tab.Screen
-        options={({ navigation }) => ({
-          tabBarButton: (props) => (
-            <TabBarPlusButton {...props} navigation={navigation} />
-          ),
-        })}
-        name="Empty"
-        component={EmptyScreen}
+        name="PerformanceScreen"
+        component={CampaignPerformanceForm}
       />
       <Tab.Screen
         options={{
@@ -4056,74 +1765,28 @@ function TabScreen() {
           tabBarShowLabel: false,
           tabBarStyle: {
             position: "absolute",
-            shadowColor: "#fff",
-            shadowOffset: {
-              width: 0,
-              height: 10,
-            },
-            shadowOpacity: 0,
-            shadowRadius: 3.5,
-            elevation: 0,
+            backgroundColor: Colors.primaryColor,
+            borderRadius: 999,
+            marginHorizontal: 20,
             height: 80,
-            bottom: 0,
-            paddingTop: 10,
+            bottom: 15,
+            paddingTop: 20,
           },
           tabBarIcon: ({ focused }) => (
             <View style={{ justifyContent: "center", alignItems: "center" }}>
-              <ChatBubbleLeftEllipsisIcon
-                size={28}
-                color={focused ? Colors.primaryColor : Colors.textColor}
-              />
+              <MegaphoneIcon color={Colors.textWhite} width={30} height={30} />
               <Text
                 style={{
-                  color: focused ? Colors.primaryColor : Colors.textColor,
+                  color: Colors.textWhite,
                 }}
               >
-                Inbox
+                Create
               </Text>
             </View>
           ),
         }}
-        name="InboxScreen"
-        component={InboxScreen}
-      />
-      <Tab.Screen
-        options={{
-          gestureEnabled: false,
-          headerShown: false,
-          tabBarShowLabel: false,
-          tabBarStyle: {
-            position: "absolute",
-            shadowColor: "#fff",
-            shadowOffset: {
-              width: 0,
-              height: 10,
-            },
-            shadowOpacity: 0,
-            shadowRadius: 3.5,
-            elevation: 0,
-            height: 80,
-            bottom: 0,
-            paddingTop: 10,
-          },
-          tabBarIcon: ({ focused }) => (
-            <View style={{ justifyContent: "center", alignItems: "center" }}>
-              <Bars3Icon
-                size={28}
-                color={focused ? Colors.primaryColor : Colors.textColor}
-              />
-              <Text
-                style={{
-                  color: focused ? Colors.primaryColor : Colors.textColor,
-                }}
-              >
-                More
-              </Text>
-            </View>
-          ),
-        }}
-        name="SettingsScreen"
-        component={SettingsScreen}
+        name="CreateCampaign"
+        component={CreateCampaign}
       />
     </Tab.Navigator>
   );
@@ -4142,31 +1805,7 @@ function App() {
           name="TabScreen"
           component={TabScreen}
         />
-        <Stack.Screen
-          options={{ headerShown: false }}
-          name="Notifications"
-          component={NotificationsScreen}
-        />
-        <Stack.Screen
-          options={{ headerShown: false }}
-          name="CreatePost"
-          component={CreatePost}
-        />
-        <Stack.Screen
-          options={{ headerShown: false }}
-          name="AudienceScreen"
-          component={AudienceScreen}
-        />
-        <Stack.Screen
-          options={{ headerShown: false }}
-          name="OverviewScreen"
-          component={OverviewScreen}
-        />
-        <Stack.Screen
-          options={{ headerShown: false }}
-          name="ExploreScreen"
-          component={ExploreScreen}
-        />
+        <Stack.Screen name="SettingScreen" component={SettingScreen} />
         {/* <Stack.Screen name="PushNotifyScreen" component={PushNotifyScreen} />
       <Stack.Screen name="SocialAuthScreen" component={SocialAuthScreen} />
       <Stack.Screen name="MainScreen" component={MainScreen} />
