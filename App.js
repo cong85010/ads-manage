@@ -1,5 +1,9 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { NavigationContainer, useFocusEffect, useRoute } from "@react-navigation/native";
+import {
+  NavigationContainer,
+  useFocusEffect,
+  useRoute,
+} from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Checkbox from "expo-checkbox";
 import { LinearGradient } from "expo-linear-gradient";
@@ -77,7 +81,7 @@ const updDocument = async (collection, data, docid) => {
   }
 };
 
-const getDataList = async (collection, limit = 3) => {
+const getDataList = async (collection, limit = 10) => {
   try {
     let dataList = [];
     await firebase
@@ -555,10 +559,25 @@ function SocialAuthScreen({ navigation }) {
 function ExtendComponent({ campaign_name, ...content }) {
   const [isExtend, setIsExtend] = useState(false);
 
-  const contentData = Object.entries(content)
-    .sort();
+  const contentData = {};
 
-    console.log(contentData);
+  (function () {
+    Object.entries(content).map(([key, value]) => {
+      if (
+        [
+          "spent",
+          "clicks",
+          "conversion_rate",
+          "views",
+          "cpc",
+          "createdAt",
+        ].includes(key)
+      ) {
+        contentData[key] = value;
+      }
+    });
+  })();
+
   return (
     <View paddingH-10 marginT-20>
       <View borderRadius={10} borderWidth borderColor={Colors.$textDisabled}>
@@ -592,14 +611,16 @@ function ExtendComponent({ campaign_name, ...content }) {
         </View>
         {isExtend ? (
           <View paddingV-10 paddingH-10>
-            {contentData.map(([key, value], index) => {
-              return (
-                <View row spread paddingV-5 key={index}>
-                  <Text text70>{key}</Text>
-                  <Text text70BO>{value}</Text>
-                </View>
-              );
-            })}
+            {Object.entries(contentData)
+              .sort()
+              .map(([key, value], index) => {
+                return (
+                  <View row spread paddingV-5 key={index}>
+                    <Text text70>{key}</Text>
+                    <Text text70BO>{value}</Text>
+                  </View>
+                );
+              })}
           </View>
         ) : null}
       </View>
@@ -611,6 +632,7 @@ function HomeScreen({ navigation }) {
   const [loading, setLoading] = React.useState(false);
   const [countNoti, setCountNoti] = React.useState(0);
   const [campaigns, setCampaigns] = React.useState([]);
+  const [dataPie, setDataPie] = React.useState([]);
   const route = useRoute();
 
   const screenWidth = Dimensions.get("window").width - 40;
@@ -623,11 +645,58 @@ function HomeScreen({ navigation }) {
       borderRadius: 16,
     },
   };
+
   const initData = async () => {
     setLoading(true);
     const data = await getDataList("campaigns");
-    console.log(data);
     setCampaigns(data);
+
+    const dataPie = [];
+    let countFB = 0;
+    let countGG = 0;
+    let countTW = 0;
+
+    data.forEach((item) => {
+      switch (item.typeAds) {
+        case "Facebook":
+          countFB++;
+          break;
+        case "Google Ads":
+          countGG++;
+          break;
+        case "Twitter":
+          countTW++;
+          break;
+      }
+    });
+
+    const pieCharTemp = [
+      {
+        name: "Facebook",
+        population: countFB,
+        color: Colors.primaryColor,
+        legendFontSize: 13,
+      },
+      {
+        name: "Google Ads",
+        population: countGG,
+        color: Colors.$outlineWarning,
+        legendFontSize: 13,
+      },
+      {
+        name: "Twitter",
+        population: countTW,
+        color: Colors.$iconSuccessLight,
+        legendFontSize: 13,
+      },
+    ];
+
+    console.log("====================================");
+    console.log(pieCharTemp);
+    console.log("====================================");
+
+    setDataPie(pieCharTemp);
+
     setLoading(false);
   };
 
@@ -636,27 +705,6 @@ function HomeScreen({ navigation }) {
       initData();
     }, [])
   );
-
-  const data = [
-    {
-      name: "Facebook",
-      population: 21500000,
-      color: Colors.primaryColor,
-      legendFontSize: 13,
-    },
-    {
-      name: "Google Ads",
-      population: 2800000,
-      color: Colors.$outlineWarning,
-      legendFontSize: 13,
-    },
-    {
-      name: "Twitter",
-      population: 11920000,
-      color: Colors.$iconSuccessLight,
-      legendFontSize: 13,
-    },
-  ];
 
   const generateData = () => {
     const months = ["Jan", "Feb", "Mar", "Apr"];
@@ -754,7 +802,7 @@ function HomeScreen({ navigation }) {
       >
         <View paddingH-20 marginT-20 style={{ position: "relative" }}>
           <PieChart
-            data={data}
+            data={dataPie}
             width={screenWidth}
             height={240}
             chartConfig={chartConfig}
@@ -990,10 +1038,12 @@ const TabBarPlusButton = ({ navigation }) => {
 };
 
 const CampaignPerformanceForm = ({ navigation }) => {
-  const [campaignName, setCampaignName] = useState("Campaign");
+  const [campaigns, setCampaigns] = useState([]);
+  const [campaign, setCampaign] = useState({});
   const screenWidth = Dimensions.get("window").width;
   const width50Per = Dimensions.get("window").width / 2;
   const [modalVisible, setModalVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const chartConfig = {
     backgroundColor: Colors.textWhite,
@@ -1006,37 +1056,40 @@ const CampaignPerformanceForm = ({ navigation }) => {
     },
   };
 
-  const handleSave = () => {
-    // Save the campaign performance data to the server
+  const handleChange = (value) => {
+    if (value === campaign.campaign_name) return;
+
+    const data = campaigns.find((item) => item.campaign_name === value);
+    setCampaign(data);
   };
 
   const data = {
     labels: ["January", "February", "March", "April", "May", "June"],
     datasets: [
       {
-        data: [20, 45, 28, 80, 99, 43],
+        data: campaign?.linearChart || [20, 45, 28, 80, 99, 43],
         color: (opacity = 1) => Colors.primaryColor, // optional
         strokeWidth: 2, // optional
       },
-      {
-        data: [14, 33, 11, 42, 33, 99],
-        color: (opacity = 1) => Colors.$outlineDanger, // optional
-        strokeWidth: 2, // optional
-      },
     ],
-    legend: ["Black Friday", "123"], // optional
+    legend: [campaign?.campaign_name || "Select here"], // optional
   };
 
-  const campaigns = [
-    {
-      label: "Campaign",
-      value: "Campaign",
-    },
-    {
-      label: "Campaign 2",
-      value: "Campaign 2",
-    },
-  ];
+  const initData = async () => {
+    setLoading(true);
+    const data = await getDataList("campaigns");
+    setCampaigns(data);
+    if (data.length > 0) {
+      setCampaign(data[0]);
+    }
+    setLoading(false);
+  };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      initData();
+    }, [])
+  );
 
   return (
     <SafeAreaView style={stylesCompaign.container}>
@@ -1055,111 +1108,189 @@ const CampaignPerformanceForm = ({ navigation }) => {
           <AdjustmentIcon width={30} height={30} color={Colors.textWhite} />
         </TouchableOpacity>
       </View>
-      <View
-        padding-10
-        margin-20
-        borderRadius={12}
-        backgroundColor={Colors.textWhite}
-      >
-        <Text style={stylesCompaign.header} marginB-10>
-          Enter Campaign
-        </Text>
-        <View borderColor="#ccc" borderWidth borderRadius={6} padding-10>
-          <TouchableOpacity
-            style={{ height: 30 }}
-            onPress={() => setModalVisible(true)}
+      <ScrollView flex>
+        <View
+          padding-10
+          margin-20
+          borderRadius={12}
+          backgroundColor={Colors.textWhite}
+        >
+          <Text style={stylesCompaign.header} marginB-10>
+            Enter Campaign
+          </Text>
+          <View
+            borderColor="#ccc"
+            row
+            spread
+            borderWidth
+            borderRadius={6}
+            padding-10
           >
-            <Text color={"#ccc"}>{campaignName || "Select here"}</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-      <View marginH-20 row centerV spread>
-        <View
-          padding-10
-          borderRadius={12}
-          backgroundColor={Colors.textWhite}
-          width={width50Per - 30}
-          height={80}
-          spread
-        >
-          <Text text80R marginB-10>
-            This Week
-          </Text>
-          <Text text60 color={Colors.textColor}>
-            $940.23
-          </Text>
+            <TouchableOpacity
+              style={{ flex: 0.9 }}
+              onPress={() => setModalVisible(true)}
+            >
+              <Text text80H color={Colors.textColor}>
+                {campaign?.campaign_name || "Select here"}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => setModalVisible(true)}>
+              <ChevronDownIcon />
+            </TouchableOpacity>
+          </View>
         </View>
         <View
           padding-10
+          margin-20
+          marginT-0
           borderRadius={12}
           backgroundColor={Colors.textWhite}
-          width={width50Per - 30}
-          height={80}
-          spread
         >
-          <Text text80R marginB-10>
-            Past Month
-          </Text>
-          <Text text60 color={Colors.textColor}>
-            $2123.34
-          </Text>
+          <View
+            padding-10
+            borderRadius={12}
+            backgroundColor={Colors.textWhite}
+            height={80}
+          >
+            <View row spread centerV>
+              <Text text80M>Project Budget</Text>
+              <Text text60 color={Colors.textColor}>
+                {campaign?.project_budget}
+              </Text>
+            </View>
+            <View row spread centerV marginT-10>
+              <Text text80M>Spent</Text>
+              <Text text60 color={Colors.textColor}>
+                {campaign?.spent}
+              </Text>
+            </View>
+          </View>
         </View>
-      </View>
-      <View marginH-20 row centerV spread marginT-20>
-        <View
-          padding-10
-          borderRadius={12}
-          backgroundColor={Colors.textWhite}
-          width={width50Per - 30}
-          height={80}
-          spread
-        >
-          <Text text80R marginB-10>
-            This 3 Week
-          </Text>
-          <Text text60 color={Colors.textColor}>
-            $1581.23
-          </Text>
+        <View marginH-20 row centerV spread>
+          <View
+            padding-10
+            borderRadius={12}
+            backgroundColor={Colors.textWhite}
+            width={width50Per - 30}
+            height={80}
+            spread
+          >
+            <Text text80R marginB-10>
+              View
+            </Text>
+            <Text text60 color={Colors.primaryColor}>
+              {campaign?.views}
+            </Text>
+          </View>
+          <View
+            padding-10
+            borderRadius={12}
+            backgroundColor={Colors.textWhite}
+            width={width50Per - 30}
+            height={80}
+            spread
+          >
+            <Text text80R marginB-10>
+              Clicks
+            </Text>
+            <Text text60 color={Colors.$outlinePrimary}>
+              {campaign?.clicks}
+            </Text>
+          </View>
         </View>
-        <View
-          padding-10
-          borderRadius={12}
-          backgroundColor={Colors.textWhite}
-          width={width50Per - 30}
-          height={80}
-          spread
-        >
-          <Text text80R marginB-10>
-            This Year
-          </Text>
-          <Text text60 color={Colors.textColor}>
-            $29133.23
-          </Text>
+        <View marginT-20 marginH-20 row centerV spread>
+          <View
+            padding-10
+            borderRadius={12}
+            backgroundColor={Colors.textWhite}
+            width={width50Per - 30}
+            height={80}
+            spread
+          >
+            <Text text80R marginB-10>
+              This Week
+            </Text>
+            <Text text60 color={Colors.$backgroundDangerHeavy}>
+              {campaign?.week}
+            </Text>
+          </View>
+          <View
+            padding-10
+            borderRadius={12}
+            backgroundColor={Colors.textWhite}
+            width={width50Per - 30}
+            height={80}
+            spread
+          >
+            <Text text80R marginB-10>
+              Past Month
+            </Text>
+            <Text text60 color={Colors.$backgroundGeneralHeavy}>
+              {campaign?.month}
+            </Text>
+          </View>
         </View>
-      </View>
-      <View marginH-20 row centerV spread marginT-20>
-        <LineChart
-          data={data}
-          width={screenWidth - 40}
-          height={300}
-          verticalLabelRotation={30}
-          backgroundColor={Colors.textWhite}
-          chartConfig={chartConfig}
-          style={{
-            borderRadius: 12,
-          }}
-          bezier
-        />
-      </View>
+        <View marginH-20 row centerV spread marginT-20>
+          <View
+            padding-10
+            borderRadius={12}
+            backgroundColor={Colors.textWhite}
+            width={width50Per - 30}
+            height={80}
+            spread
+          >
+            <Text text80R marginB-10>
+              This 3 Week
+            </Text>
+            <Text text60 color={Colors.$backgroundSuccessHeavy}>
+              {campaign?.threeMonth}
+            </Text>
+          </View>
+          <View
+            padding-10
+            borderRadius={12}
+            backgroundColor={Colors.textWhite}
+            width={width50Per - 30}
+            height={80}
+            spread
+          >
+            <Text text80R marginB-10>
+              This Year
+            </Text>
+            <Text text60 color={Colors.$backgroundWarningHeavy}>
+              {campaign?.year}
+            </Text>
+          </View>
+        </View>
+        <View marginH-20 row centerV spread marginT-20>
+          {data?.datasets[0]?.data ? (
+            <LineChart
+              data={data}
+              width={screenWidth - 40}
+              height={300}
+              verticalLabelRotation={30}
+              backgroundColor={Colors.textWhite}
+              chartConfig={chartConfig}
+              style={{
+                borderRadius: 12,
+              }}
+              bezier
+            />
+          ) : null}
+        </View>
+        <View style={{ height: 100 }} />
+      </ScrollView>
+
       <ModalPicker
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
         showCancel={false}
-        selectedValue={campaignName}
-        onValueChange={(itemValue, itemIndex) =>
-          setCampaignName((prv) => itemValue)
-        }
-        items={campaigns}
+        selectedValue={campaign?.campaign_name}
+        onValueChange={handleChange}
+        items={campaigns.map((campaign) => ({
+          label: campaign.campaign_name,
+          value: campaign.campaign_name,
+        }))} //campaigns.map((item) => item.campaign_name)
       />
     </SafeAreaView>
   );
@@ -1267,17 +1398,19 @@ const stylesModal = StyleSheet.create({
 const CreateCampaign = ({ navigation }) => {
   const [campaignName, setCampaignName] = useState("");
   const [projectBudget, setProjectBudget] = useState("");
-  const [typeAds, setTypeAds] = useState("");
+  const [typeAds, setTypeAds] = useState("Facebook");
   const [description, setDescription] = useState(0);
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
   const [modalVisible, setModalVisible] = useState(false);
+  const getRandomNumber = (min, max) =>
+    Math.floor(Math.random() * (max - min + 1)) + min;
 
   const addCampaign = () => {
     addDocument("campaigns", {
       campaign_name: campaignName,
       project_budget: projectBudget,
-      type_ads: typeAds,
+      typeAds: typeAds,
       description: description,
       start_date: startDate.getTime(),
       end_date: endDate.getTime(),
@@ -1287,6 +1420,11 @@ const CreateCampaign = ({ navigation }) => {
       views: Math.floor(Math.random() * 5000000),
       cpc: parseFloat((Math.random() * 1).toFixed(2)),
       createdAt: new Date().getTime(),
+      linearChart: Array.from({ length: 6 }, () => getRandomNumber(10, 100)),
+      week: `$${getRandomNumber(100, 500)}`,
+      month: `$${getRandomNumber(500, 1000)}`,
+      threeMonth: `$${getRandomNumber(1000, 3000)}`,
+      year: `$${getRandomNumber(3000, 5000)}`,
     });
     Alert.alert("Alert", "Success");
   };
@@ -1322,9 +1460,9 @@ const CreateCampaign = ({ navigation }) => {
   };
 
   const pickerItems = [
-    { label: "Select here", value: "Select here" },
-    { label: "Java", value: "Java" },
-    { label: "JavaScript", value: "JavaScript" },
+    { label: "Facebook", value: "Facebook" },
+    { label: "Google Ads", value: "Google Ads" },
+    { label: "Twitter", value: "Twitter" },
   ];
 
   return (
@@ -1375,7 +1513,7 @@ const CreateCampaign = ({ navigation }) => {
           centerV
         >
           <Text text70BO style={{ flex: 0.3 }}>
-            Type Ads
+            Social
           </Text>
           <View
             borderColor="#ccc"
@@ -1385,7 +1523,7 @@ const CreateCampaign = ({ navigation }) => {
             padding-10
           >
             <TouchableOpacity onPress={() => setModalVisible(true)}>
-              <Text color={"#ccc"}>{typeAds || "Select here"}</Text>
+              <Text color={"#ccc"}>{typeAds || "Facebook"}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -1552,31 +1690,79 @@ const stylesCompaign = StyleSheet.create({
 function SettingScreen({ navigation }) {
   const dataCampaign = [
     {
-      campaign_name: "Black Friday Deals",
-      spent: "$50000",
-      clicks: 100000,
-      conversion_rate: 0.02,
-      views: 2500000,
-      cpc: 0.25,
-      createdAt: new Date().getTime(),
+      campaign_name: "Holiday Special",
+      spent: "$53862",
+      clicks: 154122,
+      conversion_rate: "0.84",
+      views: 3083417,
+      cpc: "0.14",
+      createdAt: 1670585766141,
+      linearChart: [89, 28, 76, 12, 61, 48],
+      week: "$7675",
+      month: "$27667",
+      threeMonth: "$45872",
+      year: "$110150",
+      typeAds: "Facebook",
     },
     {
-      campaign_name: "Cyber Monday Deals",
-      spent: "$75000",
-      clicks: 150000,
-      conversion_rate: 0.03,
-      views: 3750000,
-      cpc: 0.5,
-      createdAt: new Date().getTime() - 13312,
+      campaign_name: "Summer Sale",
+      spent: "$67941",
+      clicks: 167124,
+      conversion_rate: "0.49",
+      views: 3428625,
+      cpc: "0.09",
+      createdAt: 1670585766142,
+      linearChart: [22, 84, 15, 37, 50, 79],
+      week: "$9203",
+      month: "$22805",
+      threeMonth: "$43139",
+      year: "$87565",
+      typeAds: "Twitter",
     },
     {
-      campaign_name: "Back to School Deals",
-      spent: "$100000",
-      clicks: 200000,
-      conversion_rate: 0.04,
-      views: 5000000,
-      cpc: 0.5,
-      createdAt: new Date().getTime() - 61312,
+      campaign_name: "Flash Promotion",
+      spent: "$72328",
+      clicks: 113563,
+      conversion_rate: "0.93",
+      views: 1446421,
+      cpc: "0.64",
+      createdAt: 1670585766143,
+      linearChart: [72, 10, 53, 92, 60, 35],
+      week: "$8790",
+      month: "$32618",
+      threeMonth: "$50227",
+      year: "$79163",
+      typeAds: "Google Ads",
+    },
+    {
+      campaign_name: "Spring Collection",
+      spent: "$42353",
+      clicks: 176329,
+      conversion_rate: "0.78",
+      views: 2624156,
+      cpc: "0.07",
+      createdAt: 1670585766144,
+      linearChart: [97, 73, 27, 56, 68, 43],
+      week: "$7172",
+      month: "$38015",
+      threeMonth: "$66513",
+      year: "$95392",
+      typeAds: "Facebook",
+    },
+    {
+      campaign_name: "New Year Kickoff",
+      spent: "$51938",
+      clicks: 125814,
+      conversion_rate: "0.23",
+      views: 1235138,
+      cpc: "0.41",
+      createdAt: 1670585766145,
+      linearChart: [49, 85, 31, 13, 96, 68],
+      week: "$9768",
+      month: "$55408",
+      threeMonth: "$44367",
+      year: "$77515",
+      typeAds: "Google Ads",
     },
   ];
 
@@ -1647,7 +1833,7 @@ function SettingScreen({ navigation }) {
           </TouchableOpacity>
         </View>
       </View> */}
-      <View
+      {/* <View
         row
         spread
         centerV
@@ -1666,7 +1852,7 @@ function SettingScreen({ navigation }) {
             <TrashIcon color={Colors.$outlineWarning} />
           </TouchableOpacity>
         </View>
-      </View>
+      </View> */}
       <View
         row
         spread
